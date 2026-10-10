@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import html as _html
 import json
 import logging
 import os
@@ -712,6 +713,576 @@ def build_team_logos(config: dict, matches: list[dict]) -> dict[str, str]:
 
 
 # --------------------------------------------------------------------------- #
+# Statistiche giocatori (PlayBasket + box Lega Basket)
+# --------------------------------------------------------------------------- #
+PB_BASE = "https://www.playbasket.it/"
+LBA_GAMES_SITEMAP = "https://www.legabasket.it/games.xml"
+_PB_ROLES = ("guardia", "playmaker", "ala", "centro", "pivot")
+
+
+def pb_abs(url: str) -> str:
+    """URL relativa PlayBasket -> assoluta (i link sono relativi al path regione)."""
+    url = (url or "").replace("&amp;", "&").strip()
+    if url.startswith("http"):
+        return url
+    if url.startswith("/"):
+        return "https://www.playbasket.it" + url
+    return PB_BASE + url
+
+
+def pb_profile_url(url: str) -> str:
+    """Forza mod=st: il tab con il game log (altri mod mostrano solo il riepilogo)."""
+    if re.search(r"[?&]mod=", url or ""):
+        return re.sub(r"([?&])mod=[a-z]+", r"\1mod=st", url, flags=re.I)
+    sep = "&" if "?" in url else "?"
+    return f"{url}{sep}mod=st"
+
+
+def _text(fragment: Any) -> str:
+    return re.sub(r"\s+", " ", _html.unescape(re.sub(r"<[^>]+>", " ", str(fragment or "")))).strip()
+
+
+def _to_num(value: Any) -> Optional[float]:
+    if value is None:
+        return None
+    s = str(value).strip().replace("%", "").replace(",", ".")
+    if not s or s in ("-", "\u2013"):
+        return None
+    try:
+        return float(s)
+    except ValueError:
+        return None
+
+
+def _int(value: Any) -> Optional[int]:
+    number = _to_num(value)
+    return int(number) if number is not None else None
+
+
+def _cells(chunk: str) -> list[str]:
+    """Celle di una riga tollerante ai <td> non chiusi (PlayBasket li omette)."""
+    raw = re.findall(r"<td[^>]*>([\s\S]*?)(?=<td[^>]*>|</tr>|$)", chunk, flags=re.I)
+    return [re.sub(r"</t[dh]>\s*$", "", c, flags=re.I).strip() for c in raw]
+
+
+def parse_pb_teams(html_src: str) -> list[dict]:
+    """Pagina 'Squadre' (mod=tm): nome societa' + URL della rosa."""
+    out: list[dict] = []
+    for m in re.finditer(
+        r"<td class=['\"]team_roster['\"]>\s*<h2>\s*<a href=[\"']([^\"']+)[\"'][^>]*>(.*?)</a>",
+        html_src or "", flags=re.I | re.S,
+    ):
+        club = _text(m.group(2))
+        if club:
+            out.append({"club": club, "roster_url": pb_abs(m.group(1))})
+    return out
+
+
+def parse_pb_roster(html_src: str) -> list[dict]:
+    """Rosa del club: nome, Pts, Ppg, eta' (title=anno), ruolo, link al profilo."""
+    table = next(
+        (m.group(1) for m in re.finditer(r"<table[^>]*>([\s\S]*?)</table>", html_src or "", flags=re.I)
+         if re.search(r"COGNOME", m.group(1), flags=re.I)),
+        None,
+    )
+    if table is None:
+        return []
+    out: list[dict] = []
+    for chunk in re.split(r"<tr[^>]*>", table, flags=re.I)[1:]:
+        link = re.search(r"<a href=[\"'](profile\.php[^\"']+)[\"'][^>]*>(.*?)</a>", chunk, flags=re.I | re.S)
+        if not link:
+            continue
+        name = _text(link.group(2))
+        if not name:
+            continue
+        cells = _cells(chunk)
+        idx = next((i for i, c in enumerate(cells) if "profile.php" in c), None)
+        pts = _text(cells[idx + 1]) if idx is not None and idx + 1 < len(cells) else ""
+        ppg = _text(cells[idx + 2]) if idx is not None and idx + 2 < len(cells) else ""
+        birth = re.search(r"<td[^>]*title=[\"'](\d{4})[\"'][^>]*>([\s\S]*?)</td>", chunk, flags=re.I)
+        role = ""
+        if birth:
+            after = re.match(r"\s*<td[^>]*>([\s\S]*?)(?=<td[^>]*>|</tr>|$)", chunk[birth.end():], flags=re.I)
+            role = _text(after.group(1)) if after else ""
+        out.append({
+            "name": name,
+            "profile_url": pb_abs(link.group(1)),
+            "birth_year": _int(birth.group(1)) if birth else None,
+            "age": _int(birth.group(2)) if birth else None,
+            "role": role,
+            "points": _int(pts),
+            "ppg": _to_num(ppg),
+            "no_presence": "Nessuna presenza" in chunk,
+        })
+    return out
+
+
+def parse_pb_profile(html_src: str) -> dict:
+    """Scheda giocatore (mod=st): eta'/ruolo, totali e game log per partita."""
+    info: dict[str, Any] = {"age": None, "role": None, "points_total": None, "points_avg": None, "log": []}
+    body = re.sub(r"<script[\s\S]*?</script>", " ", html_src or "", flags=re.I)
+    flat = _text(body)
+    head = re.search(r"Anni\s+(\d{1,3})(?:\s+([a-zàèéìòù/]+))?", flat, flags=re.I)
+    if head:
+        info["age"] = _int(head.group(1))
+        role = (head.group(2) or "").casefold()
+        if any(role.startswith(r) or r in role for r in _PB_ROLES):
+            info["role"] = head.group(2)
+    totals = re.search(r"(\d+)\s+Punti\s+([\d\.,]+)\s+Media\s+(\d+)\s+Games\s+(\d+)\s+Best", flat)
+    if totals:
+        info["points_total"] = _int(totals.group(1))
+        info["points_avg"] = _to_num(totals.group(2))
+        info["games_total"] = _int(totals.group(3))
+        info["best"] = _int(totals.group(4))
+    table = next(
+        (m.group(1) for m in re.finditer(r"<table[^>]*>([\s\S]*?)</table>", body, flags=re.I)
+         if re.search(r">Partita<", m.group(1), flags=re.I)),
+        None,
+    )
+    if table is None:
+        return info
+    headers = [_text(h) for h in re.findall(r"<th[^>]*>([\s\S]*?)</th>", table, flags=re.I)]
+    for chunk in re.split(r"<tr[^>]*>", table, flags=re.I)[1:]:
+        if "<th" in chunk.casefold():
+            continue
+        date_hit = re.search(r"data\s+(\d{2})/(\d{2})/(\d{4})", chunk)
+        anchor = re.search(r"<a[^>]*>([\s\S]*?)</a>", chunk, flags=re.I)
+        if not date_hit or not anchor:
+            continue
+        inner = anchor.group(1)
+        opponent = _text(inner.partition("<span>")[0])
+        result = re.search(r"match(?:Won|Lost)['\"]>\s*([WL])\s*</span>\]\s*(\d+-\d+)", inner)
+        cells = _cells(chunk)
+        row: dict[str, Any] = {
+            "date": f"{date_hit.group(3)}-{date_hit.group(2)}-{date_hit.group(1)}",
+            "opponent": opponent,
+            "home": bool(re.search(r"title=['\"]In casa['\"]", chunk, flags=re.I)),
+            "result": result.group(1) if result else None,
+            "score": result.group(2) if result else None,
+            "points": _int(cells[2]) if len(cells) > 2 else None,
+        }
+        if headers and len(cells) == len(headers):
+            extra = {headers[i]: _text(cells[i]) for i in range(len(headers))
+                     if headers[i] and headers[i] not in ("Partita", "Pts") and i < len(cells)
+                     and _text(cells[i]) not in ("", "-")}
+            if extra:
+                row["stats"] = extra
+        info["log"].append(row)
+    info["log"].sort(key=lambda r: r["date"])
+    return info
+
+
+def parse_lba_sitemap(xml: str) -> list[str]:
+    return re.findall(r"<loc>\s*(https://www\.legabasket\.it/game/\d+/[^<\s]+)</loc>", xml or "")
+
+
+def parse_lba_game(html_src: str, url: str) -> Optional[dict]:
+    """Box completo di una gara Lega Basket dal payload __NEXT_DATA__."""
+    m = re.search(r"<script[^>]*id=[\"']__NEXT_DATA__[\"'][^>]*>([\s\S]*?)</script>", html_src or "")
+    if not m:
+        return None
+    try:
+        data = json.loads(m.group(1))
+    except ValueError:
+        return None
+    game = (((data.get("props") or {}).get("pageProps")) or {}).get("game") or {}
+    match = game.get("match") or {}
+    date = (match.get("match_datetime") or "")[:10]
+    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", date):
+        return None
+    scores = game.get("scores") or {}
+
+    def rows_for(side: str) -> list[dict]:
+        box = scores.get(side) or {}
+        rows: list[dict] = []
+        for r in box.get("rows") or []:
+            surname = (r.get("player_surname") or "").title()
+            rows.append({
+                "player_id": r.get("player_id"),
+                "player": " ".join(x for x in (surname, r.get("player_name") or "") if x),
+                "number": r.get("player_num"),
+                "minutes": r.get("min"),
+                "points": r.get("pun"),
+                "rebounds": r.get("rimbalzi_t"),
+                "off_rebounds": r.get("rimbalzi_o"),
+                "def_rebounds": r.get("rimbalzi_d"),
+                "assists": r.get("ass"),
+                "steals": r.get("palle_r"),
+                "turnovers": r.get("palle_p"),
+                "blocks": r.get("stoppate_sub"),
+                "fouls_drawn": r.get("falli_sf"),
+                "ft": f"{r.get('tl_r')}/{r.get('tl_t')}" if r.get("tl_t") is not None else None,
+                "fg": f"{r.get('t2_r')}/{r.get('t2_t')}" if r.get("t2_t") is not None else None,
+                "three": f"{r.get('t3_r')}/{r.get('t3_t')}" if r.get("t3_t") is not None else None,
+                "value": r.get("val_lega"),
+                "plus_minus": r.get("plus_minus"),
+            })
+        return rows
+
+    return {
+        "url": url,
+        "date": date,
+        "year": match.get("year"),
+        "status": as_int(match.get("game_status")),
+        "home": match.get("h_team_name") or "",
+        "away": match.get("v_team_name") or "",
+        "team_ids": {"ht": match.get("h_team_id"), "vt": match.get("v_team_id")},
+        "home_score": match.get("home_final_score"),
+        "away_score": match.get("visitor_final_score"),
+        "prev": [{"match_id": p.get("match_id"), "team_id": p.get("team_id")}
+                 for p in (game.get("prev_matches") or [])],
+        "rows": {"ht": rows_for("ht"), "vt": rows_for("vt")},
+    }
+
+
+def _aggregate(entry: dict) -> None:
+    """Totali dal log quando disponibili, altrimenti dai valori della rosa."""
+    pts = [r.get("points") for r in entry.get("log", []) if r.get("points") is not None]
+    if pts:
+        entry["games"] = len(pts)
+        entry["points"] = sum(pts)
+        entry["ppg"] = round(sum(pts) / len(pts), 1)
+        entry["top"] = max(pts)
+    else:
+        entry["games"] = None
+        entry["points"] = entry.get("roster_points")
+        entry["ppg"] = entry.get("roster_ppg")
+        entry["top"] = None
+
+
+def _new_player(item: dict) -> dict:
+    profile = item.get("profile_url") or ""
+    hit = re.search(r"[?&]obj=(\d+)", profile)
+    entry = {
+        "player_id": f"pb_{hit.group(1)}" if hit else obs_id("PB", item.get("name", "")),
+        "name": item.get("name"),
+        "role": item.get("role") or None,
+        "birth_year": item.get("birth_year"),
+        "age": item.get("age"),
+        "roster_points": item.get("points"),
+        "roster_ppg": item.get("ppg"),
+        "profile_url": profile or None,
+        "box_source": None,
+        "log": [],
+    }
+    _aggregate(entry)
+    return entry
+
+
+def _lba_id(url: str) -> Optional[int]:
+    hit = re.search(r"/game/(\d+)", url or "")
+    return int(hit.group(1)) if hit else None
+
+
+def _lba_seen_path() -> Path:
+    return RAW / "lba_games_seen.json"
+
+
+_LBA_NICKNAMES = {
+    "nich": "nicholas", "nick": "nicholas", "mike": "michael", "bob": "robert",
+    "jim": "james", "tom": "thomas", "dan": "daniel", "danny": "daniel",
+    "joe": "joseph", "tony": "antonio", "greg": "gregory", "steve": "stephen",
+    "chris": "christopher", "dave": "david", "rick": "richard", "ed": "edward",
+    "matt": "matthew", "jeff": "jeffrey", "gregg": "gregory",
+}
+
+
+def _lba_keys(name: Any) -> set[str]:
+    """Token significativi del nome per accostare PlayBasket e Lega Basket."""
+    text = re.sub(r"\b(mc|mac|d)\s+(?=\w)", r"\1", norm_name(name))
+    keys = set()
+    for token in text.split():
+        token = _LBA_NICKNAMES.get(token, token)
+        if len(token) >= 3:
+            keys.add(token)
+    return keys
+
+
+def _enrich_with_lba(comp_id: str, entry: dict, lcfg: dict, policy: dict, errors: list[dict]) -> None:
+    """Arricchisce il log (data/opponente/punti) con il box completo Lega Basket.
+
+    Il sitemap elenca solo alcune gare correnti: da esse si risale alla stagione
+    seguendo i prev_matches pubblicati in ogni scheda gara. Solo le partite
+    giocate (game_status 2) producono righe di box.
+    """
+    tokens = {tid: [t.casefold() for t in toks] for tid, toks in (lcfg.get("tokens") or {}).items() if toks}
+    if entry["team_id"] not in tokens:
+        return
+    delay = float(policy.get("delay_seconds", 0.5))
+    retries = int(policy.get("max_retries", 1)) + 1
+    min_year = int(lcfg.get("min_year", 2026))
+    seeds_n = int(lcfg.get("seeds", 12))
+    max_games = int(lcfg.get("max_games", 220))
+    my_tokens = tokens[entry["team_id"]]
+
+    queue: list[int] = []
+    try:
+        sitemap, _ = fetch(LBA_GAMES_SITEMAP, retries=retries)
+        cands = [u for u in parse_lba_sitemap(sitemap) if any(t in u.casefold() for t in my_tokens)]
+        cands.sort(key=lambda u: _lba_id(u) or 0, reverse=True)
+        for u in cands[:seeds_n]:
+            gid = _lba_id(u)
+            if gid:
+                queue.append(gid)
+    except Exception as exc:  # noqa: BLE001
+        errors.append({"competition_id": comp_id, "phase": "players_lba", "url": LBA_GAMES_SITEMAP, "message": str(exc)})
+    time.sleep(delay)
+
+    visited: set[int] = set()
+    our_ids: set[int] = set()
+    kept: set[int] = set()
+    boxes: list[dict] = []
+    found_any = False
+
+    def _drain() -> None:
+        nonlocal found_any
+        head = 0
+        while head < len(queue) and len(visited) < max_games:
+            gid = queue[head]
+            head += 1
+            if gid in visited:
+                continue
+            visited.add(gid)
+            url = f"https://www.legabasket.it/game/{gid}"
+            try:
+                page, transport = fetch(url, retries=retries)
+            except Exception as exc:  # noqa: BLE001
+                errors.append({"competition_id": comp_id, "phase": "players_lba", "url": url, "message": str(exc)})
+                continue
+            time.sleep(delay)
+            game = parse_lba_game(page, url)
+            if not game or (game.get("year") or 0) < min_year:
+                continue
+            home_hit = any(t in game["home"].casefold() for t in my_tokens)
+            away_hit = any(t in game["away"].casefold() for t in my_tokens)
+            side = "ht" if home_hit else ("vt" if away_hit else None)
+            if side is None:
+                continue
+            save_snapshot(comp_id, f"lba_game_{gid}", page, url, transport)
+            kept.add(gid)
+            found_any = True
+            tid = game["team_ids"].get(side)
+            if tid:
+                our_ids.add(tid)
+            if game.get("status") == 2:
+                opponent = game["away"] if side == "ht" else game["home"]
+                for row in game["rows"][side]:
+                    if not row.get("minutes"):
+                        continue  # non giocata: nessuna riga di box
+                    box_row = dict(row)
+                    box_row.update({"date": game["date"], "opponent": opponent, "home": side == "ht"})
+                    boxes.append(box_row)
+            for prev in game.get("prev") or []:
+                pid, ptid = prev.get("match_id"), prev.get("team_id")
+                if pid and ptid in our_ids and pid not in visited and pid not in queue[head:]:
+                    queue.append(pid)
+
+    _drain()
+    if not found_any:
+        cached = [i for i in read_json(_lba_seen_path(), []) if isinstance(i, int) and i not in visited]
+        if cached:
+            queue = cached
+            _drain()
+    if kept:
+        write_json(_lba_seen_path(), sorted(set(read_json(_lba_seen_path(), [])) | kept))
+    if not boxes:
+        return
+    entry["box_source"] = "LEGA_BASKET"
+    by_player: dict[str, list[dict]] = {}
+    for row in boxes:
+        by_player.setdefault(norm_name(row.get("player")), []).append(row)
+
+    claimed: set[str] = set()
+
+    def _match(player_key: str) -> Optional[str]:
+        keys = _lba_keys(player_key)
+        if not keys:
+            return None
+        best, best_score = None, 0
+        for item in entry["roster"]:
+            roster_key = norm_name(item.get("name"))
+            if not roster_key or roster_key in claimed:
+                continue
+            pkeys = _lba_keys(item.get("name"))
+            common = keys & pkeys
+            if not common or not (keys <= pkeys or pkeys <= keys or len(common) >= 2):
+                continue
+            if len(common) > best_score:
+                best, best_score = roster_key, len(common)
+        if best:
+            claimed.add(best)
+        return best
+
+    leftovers: dict[str, list[dict]] = {}
+    for player_key, rows in by_player.items():
+        leftovers.setdefault(_match(player_key) or player_key, []).extend(rows)
+
+    for item in entry["roster"]:
+        rows = leftovers.pop(norm_name(item.get("name")), None)
+        if not rows:
+            continue
+        item["box_source"] = "LEGA_BASKET"
+        known = {r["date"] for r in item["log"]}
+        by_date: dict[str, dict] = {}
+        for row in rows:
+            by_date.setdefault(row["date"], row)
+        for log_row in item["log"]:
+            box_row = by_date.get(log_row["date"])
+            if box_row:
+                for key, value in box_row.items():
+                    if key in ("date", "opponent", "home", "player", "player_id") or value is None:
+                        continue
+                    log_row[key] = value
+        for date_key in sorted(by_date):
+            if date_key in known:
+                continue
+            box_row = by_date[date_key]
+            extra = {k: v for k, v in box_row.items()
+                     if k not in ("date", "opponent", "home", "player", "player_id") and v is not None}
+            item["log"].append({
+                "date": date_key, "opponent": box_row["opponent"], "home": box_row["home"],
+                "result": None, "score": None, "points": box_row.get("points"), **extra,
+            })
+        item["log"].sort(key=lambda r: r["date"])
+        _aggregate(item)
+    # giocatori presenti solo nel box (non censiti nella rosa PlayBasket)
+    for player_key, rows in leftovers.items():
+        if not player_key or not rows:
+            continue
+        by_date = {}
+        for row in rows:
+            by_date.setdefault(row["date"], row)
+        item = {
+            "player_id": "lba_" + obs_id("LBA", comp_id, player_key),
+            "name": rows[0].get("player"),
+            "role": None, "birth_year": None, "age": None,
+            "roster_points": None, "roster_ppg": None, "profile_url": None,
+            "box_source": "LEGA_BASKET",
+            "log": [
+                {
+                    "date": date_key, "opponent": by_date[date_key]["opponent"], "home": by_date[date_key]["home"],
+                    "result": None, "score": None, "points": by_date[date_key].get("points"),
+                    **{k: v for k, v in by_date[date_key].items()
+                       if k not in ("date", "opponent", "home", "player", "player_id") and v is not None},
+                }
+                for date_key in sorted(by_date)
+            ],
+        }
+        _aggregate(item)
+        entry["roster"].append(item)
+    entry["roster"].sort(key=lambda p: (p.get("name") or "").casefold())
+
+
+
+def collect_players(config: dict, policy: dict, errors: list[dict], only: Optional[str] = None) -> dict:
+    """Acquisisce rosa e statistiche per ogni squadra seguita.
+
+    Flusso: pagina squadre (mod=tm) -> rosa del club -> scheda giocatore
+    (mod=st, game log). Per l'A1 il game log e' arricchito con il box completo
+    della Lega Basket. Le competizioni non ancora pubblicate su PlayBasket
+    restituiscono status 'no_data' (nessun dato inventato).
+    """
+    delay = float(policy.get("delay_seconds", 0.5))
+    retries = int(policy.get("max_retries", 1)) + 1
+    payload: dict[str, Any] = {"generated_at": now(), "teams": {}}
+    for comp in config.get("competitions", []):
+        if not comp.get("enabled", True):
+            continue
+        if only and comp["competition_id"] != only:
+            continue
+        pcfg = comp.get("players")
+        if not pcfg:
+            continue
+        comp_id = comp["competition_id"]
+        tracked = comp.get("tracked_teams", [])
+        for t in tracked:
+            payload["teams"][t["team_id"]] = {
+                "team_id": t["team_id"],
+                "competition_id": comp_id,
+                "competition_name": comp.get("name", comp_id),
+                "season_id": comp.get("season_id"),
+                "club": t.get("canonical_name"),
+                "status": "no_data",
+                "reason": "acquisizione non eseguita",
+                "source": pcfg.get("provider", "PLAYBASKET"),
+                "source_url": pcfg.get("league_url"),
+                "box_source": None,
+                "generated_at": now(),
+                "roster": [],
+            }
+        league_url = pcfg.get("league_url")
+        if not league_url:
+            continue
+        log.info("Statistiche giocatori %s", comp_id)
+        try:
+            page, transport = fetch(league_url, retries=retries)
+            save_snapshot(comp_id, "players_teams", page, league_url, transport)
+        except Exception as exc:  # noqa: BLE001
+            errors.append({"competition_id": comp_id, "phase": "players", "url": league_url, "message": str(exc)})
+            log.error("Elenco squadre %s fallito: %s", comp_id, exc)
+            for t in tracked:
+                payload["teams"][t["team_id"]]["reason"] = f"fonte non raggiungibile ({exc})"
+            time.sleep(delay)
+            continue
+        time.sleep(delay)
+        published = parse_pb_teams(page)
+        for t in tracked:
+            tid = t["team_id"]
+            entry = payload["teams"][tid]
+            match_tokens = (pcfg.get("team_match") or {}).get(tid) or [t.get("canonical_name", "")]
+            tokens = [x.casefold() for x in match_tokens if x]
+            match = next((p for p in published if all(tok in p["club"].casefold() for tok in tokens if tok)), None)
+            if match is None:
+                entry["reason"] = (
+                    "competizione non ancora pubblicata su PlayBasket"
+                    if not published else "squadra non presente nell'elenco PlayBasket"
+                )
+                log.warning("%s: %s", tid, entry["reason"])
+                continue
+            entry["club_name"] = match["club"]
+            entry["source_url"] = match["roster_url"]
+            try:
+                roster_html, transport = fetch(match["roster_url"], retries=retries)
+                save_snapshot(comp_id, f"players_roster_{tid}", roster_html, match["roster_url"], transport)
+            except Exception as exc:  # noqa: BLE001
+                errors.append({"competition_id": comp_id, "phase": "players", "url": match["roster_url"], "message": str(exc)})
+                entry["reason"] = f"rosa non recuperabile ({exc})"
+                time.sleep(delay)
+                continue
+            time.sleep(delay)
+            roster = parse_pb_roster(roster_html)
+            if not roster:
+                entry["reason"] = "rosa non pubblicata su PlayBasket"
+                continue
+            entry["status"] = "ok"
+            entry["reason"] = None
+            for item in roster:
+                player = _new_player(item)
+                if not item.get("no_presence"):
+                    url = pb_profile_url(item["profile_url"])
+                    try:
+                        profile_html, _ = fetch(url, retries=retries)
+                    except Exception as exc:  # noqa: BLE001
+                        errors.append({"competition_id": comp_id, "phase": "players", "url": url, "message": str(exc)})
+                        time.sleep(delay)
+                        entry["roster"].append(player)
+                        continue
+                    time.sleep(delay)
+                    profile = parse_pb_profile(profile_html)
+                    if profile["log"]:
+                        player["log"] = profile["log"]
+                    player["age"] = player["age"] or profile.get("age")
+                    player["role"] = player["role"] or profile.get("role")
+                    _aggregate(player)
+                entry["roster"].append(player)
+            entry["roster"].sort(key=lambda p: (p.get("name") or "").casefold())
+            if pcfg.get("lba"):
+                _enrich_with_lba(comp_id, entry, pcfg["lba"], policy, errors)
+                time.sleep(delay)
+    return payload
+
+
+# --------------------------------------------------------------------------- #
 # Scansione
 # --------------------------------------------------------------------------- #
 @dataclass
@@ -790,12 +1361,52 @@ _SINGLE_URL_PARSERS = {
 # --------------------------------------------------------------------------- #
 # Main
 # --------------------------------------------------------------------------- #
-def run(config_path: Path, only: Optional[str], limit: Optional[int], parser: str) -> dict:
+def players_summary(players: dict) -> dict:
+    teams = players.get("teams", {})
+    return {
+        "players_teams": len(teams),
+        "players_with_data": sum(1 for t in teams.values() if t.get("status") == "ok"),
+        "players_roster": sum(len(t.get("roster", [])) for t in teams.values()),
+        "players_games": sum(len(p.get("log", [])) for t in teams.values() for p in t.get("roster", [])),
+    }
+
+
+def run_players_only(config: dict, policy: dict, only: Optional[str] = None) -> dict:
+    """Solo statistiche giocatori: aggiorna l'output esistente senza ri-scansionare."""
+    errors: list[dict] = []
+    players = collect_players(config, policy, errors, only=only)
+    out_path = OUT / "sc_portal_data.json"
+    data = read_json(out_path, None)
+    if data is None:
+        raise RuntimeError("output sc_portal_data.json assente: eseguire prima la scansione completa")
+    data["players"] = players
+    summary = data.setdefault("sync_summary", {})
+    summary.update(players_summary(players))
+    kept = [e for e in (data.get("errors") or []) if e.get("phase") not in ("players", "players_lba")]
+    data["errors"] = kept + errors
+    write_json(out_path, data)
+    write_json(LOG / "last_players_sync.json", {
+        "engine_version": f"{ENGINE_VERSION} Players",
+        "completed_at": now(),
+        "status": "COMPLETED" if not errors else "PARTIAL",
+        "summary": summary,
+        "errors": errors,
+    })
+    log.info("Giocatori: %d squadre | %d con dati | %d atleti", summary["players_teams"],
+             summary["players_with_data"], summary["players_roster"])
+    log.info("Errori giocatori: %d", len(errors))
+    return summary
+
+
+def run(config_path: Path, only: Optional[str], limit: Optional[int], parser: str,
+        skip_players: bool = False, players_only: bool = False) -> dict:
     for folder in (RAW, OBS, OUT, LOG):
         folder.mkdir(parents=True, exist_ok=True)
 
     config = read_json(config_path, {"competitions": [], "request_policy": {}})
     policy = config.get("request_policy", {})
+    if players_only:
+        return run_players_only(config, policy, only)
     old = read_json(OBS / "observations.json", [])
 
     incoming: list[dict] = []
@@ -850,6 +1461,7 @@ def run(config_path: Path, only: Optional[str], limit: Optional[int], parser: st
 
     standings = build_standings(config, results_by_comp, errors)
     team_logos = build_team_logos(config, matches)
+    players = {} if skip_players else collect_players(config, policy, errors, only=only)
 
     summary = {
         "competitions": len(reports),
@@ -859,6 +1471,7 @@ def run(config_path: Path, only: Optional[str], limit: Optional[int], parser: st
         "updated_matches": updated,
         "total_matches": len(matches),
         "errors": len(errors),
+        **players_summary(players),
     }
     transport = "REQUESTS" if requests is not None else ("URLLIB" if python_https_available() else "POWERSHELL")
     write_json(OUT / "sc_portal_data.json", {
@@ -871,6 +1484,7 @@ def run(config_path: Path, only: Optional[str], limit: Optional[int], parser: st
         "matches": matches,
         "standings": standings,
         "team_logos": team_logos,
+        "players": players,
         "errors": errors,
     })
     write_json(LOG / "last_sync.json", {
@@ -897,6 +1511,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--competition", help="scansiona solo questa competition_id")
     parser.add_argument("--limit-rounds", type=int, help="limita il numero di giornate per lato (debug)")
     parser.add_argument("--parser", choices=("regex", "bs4"), default="regex", help="motore di estrazione testo")
+    parser.add_argument("--skip-players", action="store_true", help="non acquisire le statistiche giocatori")
+    parser.add_argument("--players-only", action="store_true", help="aggiorna solo le statistiche giocatori sull'output esistente")
     parser.add_argument("--verbose", action="store_true", help="log dettagliato")
     return parser
 
@@ -910,7 +1526,14 @@ def main(argv: Optional[list[str]] = None) -> int:
     )
     log.info("SC Portal Data Engine %s - Full Season Acquisition", ENGINE_VERSION)
     try:
-        run(args.config, args.competition, args.limit_rounds, args.parser)
+        run(
+            args.config,
+            args.competition,
+            args.limit_rounds,
+            args.parser,
+            skip_players=args.skip_players,
+            players_only=args.players_only,
+        )
     except KeyboardInterrupt:
         log.error("Interrotto dall'utente.")
         return 130

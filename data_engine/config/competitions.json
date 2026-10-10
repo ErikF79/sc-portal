@@ -8,6 +8,12 @@
       "base_url": "https://fip.it/risultati/",
       "configuration": {"group":"campionati-nazionali-maschili","regione_codice":"","comitato_codice":"NAZ","sesso":"M","codice_campionato":"A1/M","codice_fase":"1","codice_girone":"85160"},
       "scan": {"mode":"CONFIGURED_FALLBACK","andata_code":"1","ritorno_code":"0","configured_rounds":{"andata":15,"ritorno":15}},
+      "players": {
+        "provider": "PLAYBASKET",
+        "league_url": "https://www.playbasket.it/league.php?lt=1&lf=M&lr=LA&lp=RM&lc=LB&season=2027&mod=tm&lg=1",
+        "team_match": {"trieste": ["trieste"], "udine": ["udine"]},
+        "lba": {"min_year": 2026, "tokens": {"trieste": ["trieste"], "udine": ["udine"]}}
+      },
       "tracked_teams": [
         {"team_id":"trieste","canonical_name":"Pallacanestro Trieste","aliases":["PALLACANESTRO TRIESTE","PALLACANESTRO TRIESTE 2004"]},
         {"team_id":"udine","canonical_name":"APU Udine","aliases":["OLD WILD WEST UDINE","APU UDINE"]}
@@ -19,6 +25,11 @@
       "base_url": "https://fip.it/risultati/",
       "configuration": {"group":"campionati-nazionali-maschili","regione_codice":"","comitato_codice":"","sesso":"M","codice_campionato":"A2/M","codice_fase":"1","codice_girone":"85122"},
       "scan": {"mode":"CONFIGURED_FALLBACK","andata_code":"1","ritorno_code":"0","configured_rounds":{"andata":19,"ritorno":19}},
+      "players": {
+        "provider": "PLAYBASKET",
+        "league_url": "https://www.playbasket.it/league.php?lt=1&lf=M&lr=LA&lp=RM&lc=L2&season=2027&mod=tm&lg=1",
+        "team_match": {"cividale": ["cividale"]}
+      },
       "tracked_teams": [
         {"team_id":"cividale","canonical_name":"Gesteco Cividale","aliases":["GESTECO CIVIDALE","CIVIDALE"]}
       ]
@@ -29,6 +40,11 @@
       "base_url": "https://fip.it/risultati/",
       "configuration": {"group":"campionati-regionali","regione_codice":"FR","comitato_codice":"RFR","sesso":"M","codice_campionato":"U19G/M","codice_fase":"1","codice_girone":"85334"},
       "scan": {"mode":"CONFIGURED_FALLBACK","andata_code":"1","ritorno_code":"0","configured_rounds":{"andata":7,"ritorno":7}},
+      "players": {
+        "provider": "PLAYBASKET",
+        "league_url": "https://www.playbasket.it/friuli/league.php?lt=2&lf=M&lr=FR&lc=U19G&season=2027&mod=tm&lg=1",
+        "team_match": {"falconU19G": ["falconstar"]}
+      },
       "tracked_teams": [
         {"team_id":"falconU19G","canonical_name":"Falconstar Monfalcone","aliases":["FALCONSTAR BASKET","FALCONSTAR","FALCONSTAR MONFALCONE"]}
       ]
@@ -39,6 +55,11 @@
       "base_url": "https://fip.it/risultati/",
       "configuration": {"group":"campionati-regionali","regione_codice":"FR","comitato_codice":"RFR","sesso":"M","codice_campionato":"U19S/M","codice_fase":"1","codice_girone":"85867"},
       "scan": {"mode":"CONFIGURED_FALLBACK","andata_code":"1","ritorno_code":"0","configured_rounds":{"andata":7,"ritorno":7}},
+      "players": {
+        "provider": "PLAYBASKET",
+        "league_url": "https://www.playbasket.it/friuli/league.php?lt=2&lf=M&lr=FR&lc=U19S&season=2027&mod=tm&lg=1",
+        "team_match": {"falconU19S": ["falconstar"]}
+      },
       "tracked_teams": [
         {"team_id":"falconU19S","canonical_name":"Falconstar Monfalcone","aliases":["FALCONSTAR BASKET","FALCONSTAR"]}
       ]
@@ -49,6 +70,11 @@
       "base_url": "https://fip.it/risultati/",
       "configuration": {"group":"campionati-regionali","regione_codice":"FR","comitato_codice":"RFR","sesso":"M","codice_campionato":"U15G/M","codice_fase":"1","codice_girone":"85498"},
       "scan": {"mode":"CONFIGURED_FALLBACK","andata_code":"1","ritorno_code":"0","configured_rounds":{"andata":7,"ritorno":7}},
+      "players": {
+        "provider": "PLAYBASKET",
+        "league_url": "https://www.playbasket.it/friuli/league.php?lt=2&lf=M&lr=FR&lc=U15G&season=2027&mod=tm&lg=1",
+        "team_match": {"gradiscaU15G": ["gradisca"]}
+      },
       "tracked_teams": [
         {"team_id":"gradiscaU15G","canonical_name":"Basket Gradisca","aliases":["BASKET GRADISCA","GRADISCA"]}
       ]
@@ -59,6 +85,11 @@
       "base_url": "https://fip.it/risultati/",
       "configuration": {"group":"campionati-regionali","regione_codice":"FR","comitato_codice":"RFR","sesso":"M","codice_campionato":"PM","codice_fase":"1","codice_girone":"85535"},
       "scan": {"mode":"CONFIGURED_FALLBACK","andata_code":"1","ritorno_code":"0","configured_rounds":{"andata":11,"ritorno":11}},
+      "players": {
+        "provider": "PLAYBASKET",
+        "league_url": "https://www.playbasket.it/friuli/league.php?lt=2&lf=M&lr=FR&lc=PM&season=2027&mod=tm&lg=1",
+        "team_match": {"isonzoDR2": ["isonzo"]}
+      },
       "tracked_teams": [
         {"team_id":"isonzoDR2","canonical_name":"Nuova Basket Isonzo","aliases":["NUOVA BASKET ISONZO"]}
       ]
@@ -69,6 +100,11 @@
       "base_url": "https://fip.it/risultati/",
       "configuration": {"group":"campionati-regionali","regione_codice":"FR","comitato_codice":"RFR","sesso":"F","codice_campionato":"C/F","codice_fase":"1","codice_girone":"85499"},
       "scan": {"mode":"CONFIGURED_FALLBACK","andata_code":"1","ritorno_code":"0","configured_rounds":{"andata":9,"ritorno":9}},
+      "players": {
+        "provider": "PLAYBASKET",
+        "league_url": "https://www.playbasket.it/friuli/league.php?lt=2&lf=F&lr=FR&lc=C%2FF&season=2027&mod=tm&lg=1",
+        "team_match": {"isonzoCF": ["isonzo"]}
+      },
       "tracked_teams": [
         {"team_id":"isonzoCF","canonical_name":"Nuova Basket Isonzo","aliases":["NUOVA BASKET ISONZO"]}
       ]
@@ -79,6 +115,11 @@
       "base_url": "https://fip.it/risultati/",
       "configuration": {"group":"campionati-regionali","regione_codice":"VEN","comitato_codice":"RVE","sesso":"M","codice_campionato":"B2","codice_fase":"1","codice_girone":"85271"},
       "scan": {"mode":"CONFIGURED_FALLBACK","andata_code":"1","ritorno_code":"0","configured_rounds":{"andata":15,"ritorno":15}},
+      "players": {
+        "provider": "PLAYBASKET",
+        "league_url": "https://www.playbasket.it/league.php?lt=1&lf=M&lr=LA&lp=RM&lc=B%2FMR&season=2027&mod=tm&lg=2",
+        "team_match": {"falconB": ["falconstar"], "dinamo": ["dinamo"]}
+      },
       "tracked_teams": [
         {"team_id":"falconB","canonical_name":"Falconstar Monfalcone","aliases":["FALCONSTAR BASKET","FALCONSTAR"]},
         {"team_id":"dinamo","canonical_name":"Dinamo Gorizia","aliases":["DINAMO GORIZIA"]}

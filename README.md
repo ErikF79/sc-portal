@@ -1,10 +1,10 @@
 # SC Portal
 
-PWA (Progressive Web App) per il **Sport Center**: calendari delle squadre, agenda, planner settimanale e analisi delle classifiche.
+PWA (Progressive Web App) per il **Sport Center**: calendari delle squadre, agenda, planner settimanale, analisi delle classifiche e **statistiche giocatori**.
 
-- **Versione:** 0.7
+- **Versione:** 0.7.6
 - **Dati:** tutti derivati da `data_engine/output/sc_portal_data.json` (nessun dato simulato: dove mancano i risultati si mostra `—` / "nessun risultato")
-- **Squadre:** FIP (basket, calendari + risultati), PlayBasket (validazione incrociata), Lega Serie A (calcio), gare personali
+- **Squadre:** FIP (basket, calendari + risultati), PlayBasket (rose, medie e game log), Lega Basket (box completo Serie A), Lega Serie A (calcio), gare personali
 
 ## Avvio locale
 
@@ -27,6 +27,20 @@ RUN_DATA_ENGINE.bat
 ```
 
 rigenera `data_engine/output/sc_portal_data.json` scaricando i calendari/risultati dalle fonti attive (FIP, PlayBasket, Lega). La PWA rileva il file ad ogni avvio (network-first).
+
+Per aggiornare solo le statistiche giocatori senza ripetere la scansione completa:
+
+```
+py data_engine/sc_data_engine.py --players-only
+```
+
+(opzioni: `--players-only`, `--skip-players`, `--competition <id>`)
+
+## Statistiche giocatori
+
+- Fonte rose/medie/game log: **PlayBasket** (tab "Giocatori" nella PWA).
+- Box completo (minuti, rimbalzi, assist, falli, valutazione…) solo per la **Serie A**: le gare vengono ricostruite dalla Lega Basket seguendo i `prev_matches` a partire dalle gare correnti del sitemap; le partite non ancora giocate non producono righe di box.
+- Le competizioni non ancora pubblicate dalla fonte mostrano onestamente "dati non disponibili" (nessun dato inventato).
 
 ## Struttura
 
