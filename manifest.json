@@ -1,0 +1,16 @@
+{
+  "name": "SC Portal 0.7",
+  "short_name": "SC Portal",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#090d0b",
+  "theme_color": "#090d0b",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

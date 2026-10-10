@@ -1,0 +1,7 @@
+# Dipendenze opzionali del Data Engine.
+# Il motore funziona anche senza: usa requests se presente, altrimenti urllib,
+# altrimenti il fallback PowerShell (utile su Anaconda senza SSL).
+requests>=2.31
+# Parser DOM alternativo (attivabile con --parser bs4).
+beautifulsoup4>=4.12
+lxml>=5.0

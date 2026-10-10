@@ -1,0 +1,97 @@
+{
+  "schema_version": "0.7",
+  "request_policy": {"sequential": true, "delay_seconds": 0.5, "max_retries": 1},
+  "competitions": [
+    {
+      "competition_id": "basket_a1_2026_27", "season_id": "2026_27", "provider": "FIP", "enabled": true,
+      "name": "Serie A",
+      "base_url": "https://fip.it/risultati/",
+      "configuration": {"group":"campionati-nazionali-maschili","regione_codice":"","comitato_codice":"NAZ","sesso":"M","codice_campionato":"A1/M","codice_fase":"1","codice_girone":"85160"},
+      "scan": {"mode":"CONFIGURED_FALLBACK","andata_code":"1","ritorno_code":"0","configured_rounds":{"andata":15,"ritorno":15}},
+      "tracked_teams": [
+        {"team_id":"trieste","canonical_name":"Pallacanestro Trieste","aliases":["PALLACANESTRO TRIESTE","PALLACANESTRO TRIESTE 2004"]},
+        {"team_id":"udine","canonical_name":"APU Udine","aliases":["OLD WILD WEST UDINE","APU UDINE"]}
+      ]
+    },
+    {
+      "competition_id": "basket_a2_2026_27", "season_id": "2026_27", "provider": "FIP", "enabled": true,
+      "name": "Serie A2",
+      "base_url": "https://fip.it/risultati/",
+      "configuration": {"group":"campionati-nazionali-maschili","regione_codice":"","comitato_codice":"","sesso":"M","codice_campionato":"A2/M","codice_fase":"1","codice_girone":"85122"},
+      "scan": {"mode":"CONFIGURED_FALLBACK","andata_code":"1","ritorno_code":"0","configured_rounds":{"andata":19,"ritorno":19}},
+      "tracked_teams": [
+        {"team_id":"cividale","canonical_name":"Gesteco Cividale","aliases":["GESTECO CIVIDALE","CIVIDALE"]}
+      ]
+    },
+    {
+      "competition_id": "fvg_u19g_2026_27_g1", "season_id": "2026_27", "provider": "FIP", "enabled": true,
+      "name": "U19 Gold (FVG)",
+      "base_url": "https://fip.it/risultati/",
+      "configuration": {"group":"campionati-regionali","regione_codice":"FR","comitato_codice":"RFR","sesso":"M","codice_campionato":"U19G/M","codice_fase":"1","codice_girone":"85334"},
+      "scan": {"mode":"CONFIGURED_FALLBACK","andata_code":"1","ritorno_code":"0","configured_rounds":{"andata":7,"ritorno":7}},
+      "tracked_teams": [
+        {"team_id":"falconU19G","canonical_name":"Falconstar Monfalcone","aliases":["FALCONSTAR BASKET","FALCONSTAR","FALCONSTAR MONFALCONE"]}
+      ]
+    },
+    {
+      "competition_id": "fvg_u19s_2026_27_gots", "season_id": "2026_27", "provider": "FIP", "enabled": true,
+      "name": "U19 Silver (GO/TS/UD)",
+      "base_url": "https://fip.it/risultati/",
+      "configuration": {"group":"campionati-regionali","regione_codice":"FR","comitato_codice":"RFR","sesso":"M","codice_campionato":"U19S/M","codice_fase":"1","codice_girone":"85867"},
+      "scan": {"mode":"CONFIGURED_FALLBACK","andata_code":"1","ritorno_code":"0","configured_rounds":{"andata":7,"ritorno":7}},
+      "tracked_teams": [
+        {"team_id":"falconU19S","canonical_name":"Falconstar Monfalcone","aliases":["FALCONSTAR BASKET","FALCONSTAR"]}
+      ]
+    },
+    {
+      "competition_id": "fvg_u15g_2026_27", "season_id": "2026_27", "provider": "FIP", "enabled": true,
+      "name": "U15 Gold (FVG)",
+      "base_url": "https://fip.it/risultati/",
+      "configuration": {"group":"campionati-regionali","regione_codice":"FR","comitato_codice":"RFR","sesso":"M","codice_campionato":"U15G/M","codice_fase":"1","codice_girone":"85498"},
+      "scan": {"mode":"CONFIGURED_FALLBACK","andata_code":"1","ritorno_code":"0","configured_rounds":{"andata":7,"ritorno":7}},
+      "tracked_teams": [
+        {"team_id":"gradiscaU15G","canonical_name":"Basket Gradisca","aliases":["BASKET GRADISCA","GRADISCA"]}
+      ]
+    },
+    {
+      "competition_id": "fvg_pm_2026_27_gots", "season_id": "2026_27", "provider": "FIP", "enabled": true,
+      "name": "Promozione Maschile (GO/TS)",
+      "base_url": "https://fip.it/risultati/",
+      "configuration": {"group":"campionati-regionali","regione_codice":"FR","comitato_codice":"RFR","sesso":"M","codice_campionato":"PM","codice_fase":"1","codice_girone":"85535"},
+      "scan": {"mode":"CONFIGURED_FALLBACK","andata_code":"1","ritorno_code":"0","configured_rounds":{"andata":11,"ritorno":11}},
+      "tracked_teams": [
+        {"team_id":"isonzoDR2","canonical_name":"Nuova Basket Isonzo","aliases":["NUOVA BASKET ISONZO"]}
+      ]
+    },
+    {
+      "competition_id": "fvg_cfem_2026_27", "season_id": "2026_27", "provider": "FIP", "enabled": true,
+      "name": "Serie C Femminile (FVG)",
+      "base_url": "https://fip.it/risultati/",
+      "configuration": {"group":"campionati-regionali","regione_codice":"FR","comitato_codice":"RFR","sesso":"F","codice_campionato":"C/F","codice_fase":"1","codice_girone":"85499"},
+      "scan": {"mode":"CONFIGURED_FALLBACK","andata_code":"1","ritorno_code":"0","configured_rounds":{"andata":9,"ritorno":9}},
+      "tracked_teams": [
+        {"team_id":"isonzoCF","canonical_name":"Nuova Basket Isonzo","aliases":["NUOVA BASKET ISONZO"]}
+      ]
+    },
+    {
+      "competition_id": "serieb_interr_2026_27", "season_id": "2026_27", "provider": "FIP", "enabled": true,
+      "name": "Serie B Interregionale",
+      "base_url": "https://fip.it/risultati/",
+      "configuration": {"group":"campionati-regionali","regione_codice":"VEN","comitato_codice":"RVE","sesso":"M","codice_campionato":"B2","codice_fase":"1","codice_girone":"85271"},
+      "scan": {"mode":"CONFIGURED_FALLBACK","andata_code":"1","ritorno_code":"0","configured_rounds":{"andata":15,"ritorno":15}},
+      "tracked_teams": [
+        {"team_id":"falconB","canonical_name":"Falconstar Monfalcone","aliases":["FALCONSTAR BASKET","FALCONSTAR"]},
+        {"team_id":"dinamo","canonical_name":"Dinamo Gorizia","aliases":["DINAMO GORIZIA"]}
+      ]
+    },
+    {
+      "competition_id": "seriea_2026_27_juventus", "season_id": "2026_27", "provider": "LEGA_SERIE_A", "enabled": true,
+      "name": "Serie A Enilive",
+      "url": "https://api-sdp.legaseriea.it/v1/serie-a/football/seasons/serie-a%3A%3AFootball_Season%3A%3Aed7fdc2a3e7b408b942ec177b7b956b5/matches?relevantTeamIds=serie-a%3A%3AFootball_Team%3A%3A0ae9210dce6f4f9b9d50aeeb19b0d371&locale=it-IT",
+      "standings": {"provider": "LEGA_SERIE_A", "url": "https://api-sdp.legaseriea.it/v1/serie-a/football/seasons/serie-a%3A%3AFootball_Season%3A%3Aed7fdc2a3e7b408b942ec177b7b956b5/standings/overall?locale=it-IT"},
+      "tracked_teams": [
+        {"team_id":"juventus","canonical_name":"Juventus","aliases":["JUVENTUS"]}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0a0e0c"><link rel="manifest" href="manifest.json"><title>SC Portal 0.7</title>
+<style>
+:root{--bg:#090d0b;--surface:#101713;--card:#151e19;--line:#29372f;--text:#f4f7f5;--muted:#97a79e;--orange:#ff7900;--orange2:#ffad4d;--green:#38e07b;--red:#ff5263;--shadow:0 12px 30px #0007}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 85% 0,#183523 0,transparent 33%),radial-gradient(circle at 0 20%,#351d09 0,transparent 27%),var(--bg);color:var(--text);font:14px/1.45 Inter,Segoe UI,Arial,sans-serif}button,input,select{font:inherit}.app{max-width:min(1560px,100%);margin:auto;min-height:100vh}.topbar{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:clamp(10px,1.5vw,22px);padding:clamp(10px,1.2vw,15px) clamp(12px,1.6vw,22px);background:#090d0bea;border-bottom:1px solid var(--line);backdrop-filter:blur(15px)}.brand{font-size:23px;font-weight:900;white-space:nowrap}.brand b{color:var(--orange)}.version{font-size:10px;background:#263229;color:var(--green);padding:3px 6px;border-radius:7px}.nav{display:flex;gap:6px;overflow:auto}.nav button,.ghost,.primary{border:0;color:var(--muted);background:transparent;padding:10px 12px;border-radius:11px;cursor:pointer;white-space:nowrap}.nav button.active{background:#223027;color:white;box-shadow:inset 0 -2px var(--orange)}.top-actions{margin-left:auto;display:flex;gap:8px}.ghost{background:#19221d;border:1px solid var(--line);color:white}.primary{background:var(--orange);color:#180b00;font-weight:800}.layout{display:block;padding:clamp(12px,1.6vw,26px)}.content{min-width:0}.panel{background:linear-gradient(145deg,#17211b,#111813);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}.side{position:fixed;top:74px;right:14px;bottom:14px;width:min(360px,calc(100vw - 28px));z-index:25;overflow:auto;padding:16px;display:none}.side.open{display:block}.side h3{margin:0}.side-head{display:flex;justify-content:space-between;align-items:center}.team-group{margin-top:18px}.group-title{font-size:11px;color:var(--orange2);font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px}.toggle-row{display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:center;padding:9px 7px;border-radius:11px}.toggle-row:hover{background:#1a241e}.avatar{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:#243129;border:1px solid #385041;font-size:10px;font-weight:900}.team-name{font-weight:700;font-size:12px}.team-sub{font-size:10px;color:var(--muted)}.switch{position:relative;width:38px;height:21px;background:#303a34;border-radius:12px;cursor:pointer}.switch.on{background:var(--green)}.switch:after{content:'';position:absolute;top:3px;left:3px;width:15px;height:15px;background:white;border-radius:50%;transition:.2s}.switch.on:after{left:20px}.hero{padding:24px;overflow:hidden;position:relative}.hero:after{content:'';position:absolute;width:180px;height:180px;border:34px solid #ff79001c;border-radius:50%;right:-45px;top:-75px}.eyebrow{color:var(--green);font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}.hero h1{font-size:clamp(24px,3vw,40px);margin:6px 0}.hero p{color:var(--muted);max-width:700px}.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:15px 0}.metric{padding:16px}.metric .value{font-size:clamp(22px,2.2vw,30px);font-weight:900}.metric .label{color:var(--muted);font-size:11px;text-transform:uppercase}.orange{color:var(--orange)}.green{color:var(--green)}.red{color:var(--red)}.section-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:22px 0 10px}.section-head h2{margin:0}.events{padding:5px 16px}.event{display:grid;grid-template-columns:82px 52px 1fr auto;gap:12px;align-items:center;padding:15px 0;border-bottom:1px solid var(--line)}.event:last-child{border:0}.datebox strong{font-size:20px}.datebox small{display:block;color:var(--muted)}.sporticon{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;background:#26332b;font-size:22px}.event-title{font-size:16px;font-weight:800}.meta,.source{font-size:11px;color:var(--muted)}.tag{display:inline-block;border:1px solid #42604d;border-radius:8px;padding:3px 7px;margin-right:5px;font-size:10px;font-weight:900;color:var(--green)}.tag.comp{color:var(--orange2);border-color:#754821}.conflict{border-left:3px solid var(--red);padding-left:10px}.view{display:none}.view.active{display:block}.toolbar{display:flex;gap:7px;align-items:center;flex-wrap:wrap}.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}.dow{text-align:center;color:var(--muted);font-size:11px;padding:8px}.day{min-height:125px;padding:8px;background:#101713;border:1px solid var(--line);border-radius:12px}.day.today{border-color:var(--orange);box-shadow:inset 0 0 0 1px var(--orange)}.daynum{font-weight:900}.cal-event{margin-top:7px;padding:6px;border-radius:8px;background:#1c2a21;border-left:3px solid var(--green);font-size:10px}.cal-event.clash{border-left-color:var(--red)}.planner{display:grid;grid-template-columns:55px repeat(7,1fr);min-width:900px}.planner-wrap{overflow:auto;padding:12px}.phead{padding:8px;text-align:center;color:var(--muted)}.ptime{height:64px;color:var(--muted);font-size:11px}.pcell{height:64px;border-top:1px solid #27342d;border-left:1px solid #27342d;position:relative}.pitem{position:absolute;z-index:2;left:4px;right:4px;top:3px;padding:6px;background:#1d3425;border-left:3px solid var(--green);border-radius:7px;font-size:10px}.pitem.clash{background:#382027;border-left-color:var(--red)}.teams-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}.team-card{padding:16px}.team-card-top{display:flex;gap:12px;align-items:center}.team-card .avatar{width:52px;height:52px;border-radius:15px;font-size:14px}.team-card a{color:var(--orange2);font-size:11px}.empty{padding:28px;text-align:center;color:var(--muted)}.modal{position:fixed;inset:0;background:#000b;z-index:30;display:none;place-items:center;padding:20px}.modal.open{display:grid}.dialog{width:min(650px,100%);max-height:calc(100vh - 40px);overflow:auto;background:#121a15;border:1px solid var(--line);border-radius:20px;padding:20px}.form{display:grid;grid-template-columns:1fr 1fr;gap:10px}.form input,.form select{width:100%;padding:11px;background:#0b110d;border:1px solid #314138;border-radius:10px;color:white}.full{grid-column:1/-1}.notice{padding:12px;border:1px solid #60431d;background:#261b0e;border-radius:12px;color:#ffc98d;margin-bottom:12px}.mobile-filter{display:block}.drawer-backdrop{position:fixed;inset:0;background:#000a;z-index:24;display:none}body.drawer-open .drawer-backdrop{display:block}@media(max-width:950px){.hero:after{display:none}.event{grid-template-columns:72px 46px 1fr auto}}@media(max-width:650px){.topbar{padding:12px}.nav{order:3;width:100%}.topbar{flex-wrap:wrap}.layout{padding:12px}.hero h1{font-size:clamp(22px,7vw,30px)}.metrics{grid-template-columns:1fr 1fr}.event{grid-template-columns:60px 42px 1fr}.event>div:last-child{display:none}.calendar{grid-template-columns:repeat(7,105px);min-width:775px}.calendar-wrap{overflow:auto}.form{grid-template-columns:1fr}.full{grid-column:auto}}@media(max-width:460px){.metrics,.teams-grid{grid-template-columns:1fr}.brand{font-size:20px}.event{grid-template-columns:54px 38px 1fr;gap:9px}.sporticon{width:38px;height:38px;font-size:18px}.std th,.std td{padding:6px 7px}.dcbar{height:90px}.team-card .avatar{width:44px;height:44px}}
+.dcbar{display:flex;gap:8px;align-items:end;height:115px}.dcbar span{width:28px;border-radius:7px 7px 0 0;display:block}.availability{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.available{color:var(--green);border-color:#42604d}.unavailable{color:var(--muted);border-color:#344039} select.ghost{appearance:auto}.toast{position:fixed;right:18px;bottom:18px;background:#16221b;border:1px solid var(--orange);color:var(--text);padding:11px 14px;border-radius:12px;box-shadow:var(--shadow);z-index:60;opacity:0;transform:translateY(10px);transition:.25s;pointer-events:none;max-width:320px}.toast.show{opacity:1;transform:none}.engine-status{margin-top:8px;font-size:11px;color:var(--muted)}.std-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,680px),1fr));gap:14px;align-items:start}#analisi .metrics{max-width:940px}.std-card{padding:16px}.std-card .section-head{margin:0 0 12px}.std-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:#0e1512}.std{width:100%;min-width:660px;border-collapse:collapse;font-size:14px}.std th,.std td{padding:9px 11px;text-align:right;border-bottom:1px solid rgba(255,255,255,.06);white-space:nowrap;vertical-align:middle}.std th{color:var(--muted);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;font-weight:800;background:#151e19;border-bottom:1px solid var(--line)}.std th:first-child,.std td:first-child{text-align:center;width:42px;color:var(--orange);font-weight:900}.std th:nth-child(2),.std td:nth-child(2){text-align:left;min-width:210px;white-space:normal}.std th:last-child,.std td:last-child{text-align:center}.std tbody tr:nth-child(even):not(.trk) td{background:rgba(255,255,255,.022)}.std tbody tr:not(.trk):hover td{background:rgba(255,121,0,.09)}.std tbody tr:last-child td{border-bottom:0}.std tbody tr.trk td{background:linear-gradient(90deg,#20301f,#18231c)}.std tbody tr.trk td:first-child{border-left:2px solid var(--orange)}.std .teamcell{display:flex;align-items:center;gap:9px}.std .avatar{width:28px;height:28px;border-radius:9px;font-size:9px;flex:0 0 auto}.std .teamcell .name{font-weight:700}.std-foot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:10px 2px 0}.pts{font-weight:900;color:var(--orange2)}.pos{color:var(--green);font-weight:700}.neg{color:var(--red);font-weight:700}.rank{font-weight:900;color:var(--orange)}.chip{display:inline-block;width:16px;height:16px;line-height:16px;border-radius:4px;font-size:10px;font-weight:900;text-align:center;margin:0 1px}.chip.w{background:#173c26;color:var(--green)}.chip.d{background:#3d3016;color:var(--orange2)}.chip.l{background:#3c1720;color:var(--red)}.trktag{border-color:var(--orange)!important;color:var(--orange2)!important}.avatar{overflow:hidden}.avatar img{width:100%;height:100%;object-fit:contain;display:block}.score{font-weight:900;color:var(--orange2);padding:0 3px}.tag.done{color:var(--muted);border-color:#3a4a41}.event.done .event-title,.event.done .datebox{opacity:.66}.event.today{background:linear-gradient(90deg,#20301f66,#1a241e);border-left:3px solid var(--orange);padding-left:10px;margin-left:-3px}.cal-event.done{opacity:.6;border-left-color:#4a5a51}.pitem.done{opacity:.6;border-left-color:#4a5a51}.logo-btn{display:inline-block;border:1px solid var(--line);border-radius:8px;padding:3px 8px;margin-right:6px;font-size:11px;color:var(--muted);cursor:pointer;background:#19221d}.logo-btn:hover{color:var(--text);border-color:var(--orange)}.logo-btn input{display:none}.dc-head{display:flex;gap:10px;align-items:center}.dc-head h3{margin:0}
+#datacenter .metrics{max-width:1180px}
+.dc-panel{padding:16px}
+.dc-panel .section-head{margin:0 0 14px}
+.dc-panel .section-head h3{font-size:16px;margin:2px 0 0}
+.dc-panel .section-head .toolbar{flex:0 0 auto}
+.kv{display:grid;grid-template-columns:1fr auto;gap:9px 16px;font-size:13.5px;align-items:center}
+.kv .k{color:var(--muted)}
+.kv .v{font-weight:800;text-align:right}
+.dlt{display:inline-block;padding:2px 7px;border-radius:7px;font-size:11px;font-weight:800;margin-left:6px;border:1px solid var(--line);white-space:nowrap}
+.dlt.up{color:var(--green);border-color:#42604d}
+.dlt.down{color:var(--red);border-color:#5a2a33}
+.dlt.flat{color:var(--muted)}
+.streak{display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin:6px 0 4px}
+.streak .chip{width:20px;height:20px;line-height:20px;border-radius:6px}
+.streaklabel{font-size:12px;color:var(--muted);margin-left:4px}
+.badge{display:inline-flex;gap:6px;align-items:center;padding:6px 10px;border-radius:10px;border:1px solid var(--line);font-size:11.5px;color:var(--muted);background:#131b16;margin:4px 6px 0 0}
+.badge.ok{color:var(--green);border-color:#42604d}
+.matchboard{display:flex;gap:14px;align-items:center;justify-content:space-between;padding:16px;border:1px solid var(--line);border-radius:14px;background:#0e1512}
+.matchboard .mside{flex:1;min-width:0}
+.matchboard .mside.r{text-align:right}
+.matchboard .bigscore{font-size:clamp(24px,4vw,38px);font-weight:900;color:var(--orange2);white-space:nowrap;letter-spacing:.02em}
+.matchboard .mnm{font-weight:800;font-size:14px}
+.matchboard .msub{font-size:11px;color:var(--muted);margin-top:3px;overflow-wrap:anywhere}
+.matchboard .msub a{color:var(--orange2)}
+.qt{width:100%;border-collapse:collapse;font-size:13.5px}
+.qt th,.qt td{padding:8px 9px;text-align:center;border-bottom:1px solid rgba(255,255,255,.06);white-space:nowrap}
+.qt th{color:var(--muted);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;font-weight:800;background:#151e19}
+.qt td.lft,.qt th.lft{text-align:left;white-space:normal}
+.qt tbody tr:last-child td{border-bottom:0}
+.qt .strong{font-weight:900;color:var(--orange2)}
+.netbar{position:relative;height:8px;border-radius:6px;background:#0e1512;border:1px solid var(--line);margin:14px 0 6px}
+.netbar .ours{position:absolute;top:-4px;width:3px;height:16px;background:var(--orange);border-radius:3px;transform:translateX(-1px)}
+.netbar .avg{position:absolute;top:0;width:1px;height:8px;background:#5b8def}
+.netlegend{display:flex;justify-content:space-between;gap:10px;font-size:11px;color:var(--muted)}
+.chart{display:block}
+.chartbox{overflow-x:auto;padding-bottom:4px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.subnote{font-size:11.5px;color:var(--muted);margin-top:12px;line-height:1.6}
+.subnote b{color:var(--text)}
+@media(max-width:650px){.matchboard{flex-direction:column;gap:10px}.matchboard .mside,.matchboard .mside.r{text-align:center}.dc-panel .section-head{align-items:flex-start}}
+#agendaEvents.events{max-height:calc(100vh - 250px);overflow:auto}/* adattamento calendario / planner */
+.scrollhint{display:none;margin-top:9px;font-size:11.5px;color:var(--muted)}
+.planner-list{display:none;padding:14px 16px}
+.pday{padding:12px 0;border-top:1px solid var(--line)}
+.pday:first-child{border-top:0;padding-top:2px}
+.pday-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:9px}
+.pday-name{font-weight:900}
+.pday-count{font-size:11px;color:var(--muted);font-weight:800;letter-spacing:.05em;text-transform:uppercase}
+.pday.today .pday-name{color:var(--orange)}
+.pday-empty{font-size:12px;color:var(--muted);padding:2px 0}
+.pl-item{display:grid;grid-template-columns:52px minmax(0,1fr);gap:10px;align-items:start;padding:10px 11px;margin-bottom:8px;background:#101713;border:1px solid var(--line);border-left:3px solid var(--green);border-radius:11px}
+.pl-item:last-child{margin-bottom:0}
+.pl-item.clash{background:#1b1418;border-color:#43282f;border-left-color:var(--red)}
+.pl-item.done{opacity:.62;border-left-color:#4a5a51}
+.pl-time{font-weight:800;font-size:12.5px;padding-top:1px}
+.pl-body{min-width:0}
+.pl-title{font-size:13px;font-weight:700;line-height:1.35;overflow-wrap:anywhere}
+.pl-score{color:var(--orange);font-weight:900}
+.pl-venue{margin-top:5px;font-size:11px;color:var(--muted);line-height:1.4;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pl-status{margin-top:7px}
+.clash-tag{color:var(--red);border-color:#5a2a33}
+@media(max-width:950px){.day{min-height:92px;padding:7px}.cal-event{margin-top:5px;padding:5px 6px;font-size:9.5px;line-height:1.35;border-radius:7px}}
+@media(max-width:900px){.planner-wrap{display:none}.planner-list{display:block}}
+@media(max-width:650px){.scrollhint{display:block}.calendar{grid-template-columns:repeat(7,105px);min-width:777px}.calendar .day{min-height:52px;padding:6px}.cal-event{margin-top:4px;padding:4px 5px;font-size:9.5px;line-height:1.3;border-radius:6px}.daynum{font-size:12px}.dow{padding:6px 4px}}
+</style></head><body><div class="app"><header class="topbar"><div class="brand"><b>SC</b> PORTAL <span class="version">0.7</span></div><nav class="nav"><button class="active" data-view="dashboard">Dashboard</button><button data-view="calendar">Calendario</button><button data-view="planner">Planner</button><button data-view="agenda">Agenda</button><button data-view="teams">Squadre</button><button data-view="datacenter">Data Center</button><button data-view="analisi">Analisi</button><button data-view="sources">Fonti</button></nav><div class="top-actions"><button class="ghost mobile-filter" onclick="toggleFilters()">Filtri</button><button class="ghost" title="Importa un file sc_portal_data.json" onclick="document.getElementById('importFile').click()">Importa JSON</button><input type="file" id="importFile" accept=".json,application/json" style="display:none" onchange="importEngineFile(this)"><button class="primary" onclick="openModal()">+ Gara</button></div></header><main class="layout"><div class="content">
+<section id="dashboard" class="view active"><div class="panel hero"><div class="eyebrow">Il tuo centro sportivo personale</div><h1>Le gare che contano, <span class="orange">in un solo posto.</span></h1><p>Vista combinata delle formazioni selezionate. I dati ufficiali sono distinti dagli eventi inseriti manualmente.</p></div><div class="metrics"><div class="panel metric"><div class="label">Gare visibili</div><div id="mVisible" class="value">0</div></div><div class="panel metric"><div class="label">Squadre attive</div><div id="mTeams" class="value green">0</div></div><div class="panel metric"><div class="label">Sovrapposizioni</div><div id="mClash" class="value red">0</div></div><div class="panel metric"><div class="label">Fonti ufficiali</div><div id="mSources" class="value orange">3</div></div></div><div class="section-head"><h2>Prossimi impegni</h2><button class="ghost" onclick="go('agenda')">Apri agenda</button></div><div class="panel events" id="dashEvents"></div></section>
+<section id="calendar" class="view"><div class="section-head"><div><div class="eyebrow">Vista mensile</div><h2 id="calTitle">Ottobre 2026</h2></div><div class="toolbar"><button class="ghost" onclick="calNav(-1)">‹</button><button class="ghost" onclick="calToday()">Oggi</button><button class="ghost" onclick="calNav(1)">›</button></div></div><div class="calendar-wrap"><div id="cal" class="calendar"></div></div><div class="scrollhint">Scorri orizzontalmente per vedere tutta la settimana →</div></section>
+<section id="planner" class="view"><div class="section-head"><div><div class="eyebrow">Vista oraria</div><h2 id="planTitle">Settimana 5–11 ottobre</h2></div><div class="toolbar"><button class="ghost" onclick="planNav(-1)">‹</button><button class="ghost" onclick="planToday()">Oggi</button><button class="ghost" onclick="planNav(1)">›</button><span class="tag" title="Le gare che iniziano a meno di 2 ore da un'altra gara seguita sono marcate con ⚠ sovrapposta">⚠ sovrapposte</span></div></div><div class="panel planner-wrap"><div class="planner" id="plan"></div></div><div class="panel planner-list" id="planList"></div></section>
+<section id="agenda" class="view"><div class="section-head"><div><div class="eyebrow">Elenco cronologico</div><h2>Agenda</h2></div><button class="primary" onclick="openModal()">+ Gara manuale</button></div><div class="panel events" id="agendaEvents"></div></section>
+<section id="teams" class="view"><div class="section-head"><div><div class="eyebrow">Catalogo</div><h2>Società e formazioni</h2></div></div><div class="teams-grid" id="teamCards"></div></section>
+<section id="datacenter" class="view"><div class="section-head"><div><div class="eyebrow">Sports Intelligence</div><h2>Data Center</h2></div><div class="toolbar"><select id="dcTeam" class="ghost" onchange="renderDataCenter()"></select><select id="dcWindow" class="ghost" onchange="renderDataCenter()" title="Finestra per stato di forma"><option value="5">Ultime 5</option><option value="8" selected>Ultime 8</option><option value="0">Tutte</option></select><select id="dcSeason" class="ghost"><option>2026/27</option></select></div></div><div class="metrics" id="dcKpis"></div><div class="std-grid" id="dcGrid"><div class="panel dc-panel"><div class="section-head"><div><div class="eyebrow">Stato di forma</div><h3>Overview squadra</h3></div></div><div id="dcOverview"></div></div><div class="panel dc-panel"><div class="section-head"><div><div class="eyebrow">Metriche standard</div><h3>Analisi avanzata</h3></div></div><div id="dcAdvanced"></div></div><div class="panel dc-panel"><div class="section-head"><div><div class="eyebrow">Match Center</div><h3 id="dcMatchTitle">Analisi gara</h3></div><div class="toolbar"><select id="dcGame" class="ghost" onchange="renderDataCenter()" title="Gara da analizzare"></select></div></div><div id="dcMatch"></div></div><div class="panel dc-panel"><div class="section-head"><div><div class="eyebrow">Trend</div><h3 id="dcTrendTitle">Punti fatti e subiti</h3></div><span class="meta" id="dcTrendMeta"></span></div><div id="dcTrend"></div></div><div class="panel dc-panel"><div class="section-head"><div><div class="eyebrow">Previsioni</div><h3>Prossime gare</h3></div></div><div id="dcNext"></div></div><div class="panel dc-panel"><div class="section-head"><div><div class="eyebrow">Contesto campionato</div><h3>Classifica</h3></div></div><div id="dcContext"></div></div><div class="panel dc-panel"><div class="section-head"><div><div class="eyebrow">Dati individuali</div><h3>Giocatori e marcatori</h3></div></div><div id="dcPlayers"></div></div></div><div class="section-head"><h2>Risultati acquisiti</h2><span class="meta">Seleziona una riga per aprirla nel Match Center</span></div><div class="panel events" id="dcResults"></div><div class="notice" style="margin-top:16px">I moduli analitici compaiono solo quando esiste un dato sorgente. I valori mancanti non vengono sostituiti con zero e non vengono simulati. Le probabilità sono stime indicative derivate da metriche standard: Pythagorean expectation e modello logistico sul differenziale di efficienza.<div class="engine-status" id="engineStatus">Data Engine: non caricato</div></div></section>
+<section id="analisi" class="view"><div class="section-head"><div><div class="eyebrow">Classifiche ufficiali</div><h2 id="stdTitle">Analisi campionati</h2></div><span class="meta">Elaborato dal Data Engine 0.7</span></div><div class="metrics"><div class="panel metric"><div class="label">Campionati classificati</div><div id="stdCount" class="value orange">0</div></div><div class="panel metric"><div class="label">Squadre seguite in classifica</div><div id="stdPlaced" class="value green">0</div></div><div class="panel metric"><div class="label">Fonti classifica</div><div id="stdSources" class="value">0</div></div></div><div class="std-grid" id="stdCards"></div><div class="notice" style="margin-top:16px">Classifiche estratte dalle pagine ufficiali FIR/FIP (blocco results-ranking-full) e dall'API Lega Serie A. Le righe evidenziate in arancione sono le squadre seguite; il form (ultime 5 gare) è disponibile dove pubblicato dalla fonte.</div></section><section id="sources" class="view"><div class="section-head"><div><div class="eyebrow">Tracciabilità</div><h2>Fonti configurate</h2></div></div><div class="notice">La PWA legge l'output del Data Engine (data_engine/output/sc_portal_data.json) all'avvio e consente l'import manuale di un file JSON. Le gare ufficiali (FIP) sono distinte dalle fonti secondarie (PlayBasket) e dagli inserimenti personali.</div><div class="teams-grid" id="sourceCards"></div></section>
+</div><aside class="panel side" id="side"><div class="side-head"><div><div class="eyebrow">Filtri dinamici</div><h3>Le mie squadre</h3></div><button class="ghost mobile-filter" onclick="toggleFilters()">Chiudi</button></div><div class="toolbar" style="margin-top:12px"><button class="ghost" onclick="setAll(true)">Tutte</button><button class="ghost" onclick="setAll(false)">Nessuna</button></div><div id="filters"></div></aside></main></div>
+<div class="modal" id="modal"><div class="dialog"><div class="section-head"><h2>Nuova gara manuale</h2><button class="ghost" onclick="closeModal()">Chiudi</button></div><div class="form"><select id="fTeam"></select><input id="fOpponent" placeholder="Avversaria"><input id="fDate" type="date" value="2026-10-17"><input id="fTime" type="time" value="18:00"><input class="full" id="fVenue" placeholder="Luogo / impianto"><select class="full" id="fType"><option>Campionato</option><option>Torneo</option><option>Coppa</option><option>Amichevole</option><option>Altro</option></select><button class="primary full" onclick="addManual()">Salva nell'agenda</button></div></div></div>
+<div class="drawer-backdrop" id="drawerBackdrop" onclick="closeFilters()"></div>
+<div class="toast" id="toast"></div>
+<script>
+const TEAMS=[
+{id:'trieste',club:'Pallacanestro Trieste',form:'Prima squadra',code:'A1',sport:'Basket',logo:'PT',group:'Basket nazionale',source:'FIP',url:'https://fip.it/risultati/'},
+{id:'udine',club:'APU Udine',form:'Prima squadra',code:'A1',sport:'Basket',logo:'AU',group:'Basket nazionale',source:'FIP',url:'https://fip.it/risultati/'},
+{id:'cividale',club:'Gesteco Cividale',form:'Prima squadra',code:'A2',sport:'Basket',logo:'GC',group:'Basket nazionale',source:'FIP',url:'https://fip.it/risultati/?group=campionati-nazionali-maschili&sesso=M&comitato_codice=&codice_campionato=A2/M'},
+{id:'falconB',club:'Falconstar Monfalcone',form:'Senior',code:'B',sport:'Basket',logo:'FM',group:'Basket nazionale',source:'FIP Veneto',url:'https://fip.it/risultati/?group=campionati-regionali&regione_codice=VE&comitato_codice=RVE'},
+{id:'dinamo',club:'Dinamo Gorizia',form:'Senior',code:'B',sport:'Basket',logo:'DG',group:'Basket nazionale',source:'FIP Veneto',url:'https://fip.it/risultati/?group=campionati-regionali&regione_codice=VE&comitato_codice=RVE'},
+{id:'gradiscaU15G',club:'Basket Gradisca',form:'Under 15 Gold',code:'U15G',sport:'Basket',logo:'BG',group:'Basket FVG',source:'FIP FVG',url:'https://fip.it/risultati/?group=campionati-regionali&sesso=M&comitato_codice=RFR&codice_campionato=U15G/M&regione_codice=FR'},
+{id:'falconU19G',club:'Falconstar Monfalcone',form:'Under 19 Gold',code:'U19G',sport:'Basket',logo:'FM',group:'Basket FVG',source:'FIP FVG',url:'https://fip.it/risultati/?group=campionati-regionali&sesso=M&comitato_codice=RFR&codice_campionato=U19G/M&regione_codice=FR'},
+{id:'falconU19S',club:'Falconstar Monfalcone',form:'Under 19 Silver',code:'U19S',sport:'Basket',logo:'FM',group:'Basket FVG',source:'FIP FVG',url:'https://fip.it/risultati/?group=campionati-regionali&sesso=M&comitato_codice=RFR&codice_campionato=U19S/M&regione_codice=FR'},
+{id:'isonzoDR2',club:'Nuova Basket Isonzo',form:'DR2 Maschile',code:'DR2',sport:'Basket',logo:'NI',group:'Basket FVG',source:'FIP FVG',url:'https://fip.it/risultati/?group=campionati-regionali&sesso=M&comitato_codice=RFR&codice_campionato=PM&regione_codice=FR'},
+{id:'isonzoCF',club:'Nuova Basket Isonzo',form:'C Femminile',code:'CF',sport:'Basket',logo:'NI',group:'Basket FVG',source:'FIP FVG',url:'https://fip.it/risultati/?group=campionati-regionali&regione_codice=FR&comitato_codice=RFR&sesso=F'},
+{id:'juventus',club:'Juventus',form:'Prima squadra',code:'A',sport:'Calcio',logo:'J',group:'Calcio',source:'Lega Serie A',url:'https://www.legaseriea.it/team/juventus'}];
+const VERIFIED=[
+{id:'pb_u19g_1',team:'falconU19G',date:'2026-10-05',time:'18:45',home:'SB Miky Mian',away:'Falconstar Monfalcone',venue:'Dato campo non acquisito',source:'PlayBasket',type:'Campionato',verified:false,scoreHome:39,scoreAway:96,quality:'SECONDARY'},
+{id:'fip22',team:'trieste',date:'2026-10-10',time:'20:30',home:'Openjobmetis Varese',away:'Pallacanestro Trieste 2004',venue:'ITELYUM ARENA, Varese',source:'FIP',type:'Campionato',verified:true},
+{id:'fip24',team:'udine',date:'2026-10-10',time:'20:00',home:'Old Wild West Udine',away:'Dolomiti Energia Trento',venue:'Palasport Primo Carnera, Udine',source:'FIP',type:'Campionato',verified:true},
+{id:'lsa6',team:'juventus',date:'2026-10-11',time:'11:45',home:'Cagliari',away:'Juventus',venue:'Sede da fonte Lega Serie A',source:'Lega Serie A',type:'Campionato',verified:true}];
+let manual=JSON.parse(localStorage.getItem('scportal.manual')||'[]');let enabled=JSON.parse(localStorage.getItem('scportal.enabled')||'null')||Object.fromEntries(TEAMS.map(t=>[t.id,true]));let engine={matches:[],standings:[],meta:null,summary:null,logos:{}};let calMonth=null,weekStart=null;
+const $=id=>document.getElementById(id), team=id=>TEAMS.find(t=>t.id===id);
+let logos=JSON.parse(localStorage.getItem('scportal.logos')||'{}');
+function nowMin(){return Date.now()/60000}
+function todayIso(){const n=new Date();return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0')}
+function isToday(g){return g.date===todayIso()}
+function isDone(g){return !!g.date&&toMin(g)<nowMin()}
+function hasScore(g){return Number.isFinite(g.scoreHome)&&Number.isFinite(g.scoreAway)}
+function avatar(t,cls){const lg=logos[t.id]||(engine.logos&&engine.logos[t.id]);return `<div class="avatar${cls?' '+cls:''}">${lg?`<img src="${lg}" alt="${t.club}" onerror="this.parentNode.textContent='${t.logo}'">`:t.logo}</div>`}
+function saveLogos(){try{localStorage.setItem('scportal.logos',JSON.stringify(logos))}catch(e){toast('Logo non salvato: spazio locale esaurito')}}
+function importLogo(id,input){const f=input.files&&input.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{const img=new Image();img.onload=()=>{const s=128,c=document.createElement('canvas');c.width=c.height=s;const x=c.getContext('2d'),r=Math.min(s/img.width,s/img.height),w=img.width*r,h=img.height*r;x.clearRect(0,0,s,s);x.drawImage(img,(s-w)/2,(s-h)/2,w,h);logos[id]=c.toDataURL('image/png');saveLogos();render();toast('Logo aggiornato')};img.onerror=()=>toast('Immagine non valida');img.src=rd.result};rd.readAsDataURL(f)}
+function removeLogo(id){delete logos[id];saveLogos();render()}
+function logoControl(t){const lg=logos[t.id];return `<span class="logo-btn" onclick="this.querySelector('input').click()">${lg?'Cambia logo':'Importa logo'}<input type="file" accept="image/*" onchange="importLogo('${t.id}',this)"></span>${lg?`<span class="logo-btn" onclick="removeLogo('${t.id}')">Rimuovi</span>`:''}`}
+function positionEvents(){const c=$('agendaEvents');if(!c)return;const r=[...c.querySelectorAll('.event')].find(x=>+x.dataset.min>=nowMin()-1);c.scrollTop=r?Math.max(0,r.offsetTop-c.offsetTop-6):0}
+function toMin(g){const [y,mo,d]=g.date.split('-').map(Number),[h,mi]=(g.time||'00:00').split(':').map(Number);return Date.UTC(y,mo-1,d,h||0,mi||0)/60000}
+function clashes(gs,thr){thr=thr||120;const a=gs.map(g=>({g,m:toMin(g)})),ids=new Set;for(let i=0;i<a.length;i++)for(let j=i+1;j<a.length;j++){if(Math.abs(a[i].m-a[j].m)<=thr){ids.add(a[i].g.id);ids.add(a[j].g.id)}}return ids}
+function mapMatch(m){let tid=(m.tracked_team_ids||[]).find(id=>team(id));if(!tid){const blob=((m.home||'')+' '+(m.away||'')).toLowerCase();const t=TEAMS.find(x=>blob.includes(x.club.toLowerCase())||blob.includes((x.club.split(' ')[0]||'').toLowerCase()));tid=t&&t.id}if(!tid)return null;const t=team(tid),club=t.club.toLowerCase(),norm=s=>String(s||'').toLowerCase(),first=club.split(' ')[0],al=((typeof STD_ALIASES!=='undefined'&&STD_ALIASES[tid])||[]).map(a=>a.toLowerCase()),our=s=>{const n=norm(s);if(!n)return false;return al.length?al.some(a=>n.includes(a)):n.includes(club)},hIs=our(m.home),aIs=our(m.away),mh=norm(m.home);const homeSide=hIs&&!aIs?true:aIs&&!hIs?false:(mh.includes(club)||mh.includes(first));const num=v=>(v===null||v===undefined||v==='')?null:Number(v);return {id:m.match_id||('e_'+m.observation_id),team:tid,date:m.date,time:m.time||'00:00',home:m.home||t.club,away:m.away||'Avversaria',venue:m.venue||(t.club+' — sede da fonte'),source:m.provider||'Engine',type:'Campionato',verified:m.verification_status==='OFFICIAL',homeSide:homeSide,scoreHome:num(m.home_score),scoreAway:num(m.away_score),quality:m.verification_status||'SOURCE',url:m.source_url}}
+function engineEvents(){return (engine.matches||[]).map(mapMatch).filter(Boolean)}
+function dedup(es){const merge=(cur,e)=>{if(!cur.time&&e.time)cur.time=e.time;if(!Number.isFinite(cur.scoreHome)&&Number.isFinite(e.scoreHome)){cur.scoreHome=e.scoreHome;cur.scoreAway=e.scoreAway}if(!cur.verified&&e.verified){cur.verified=true;cur.source=e.source||cur.source;cur.quality=e.quality||cur.quality;cur.url=e.url||cur.url}if(e.source&&e.source!==cur.source){cur.corrob=cur.corrob||[];if(!cur.corrob.includes(e.source))cur.corrob.push(e.source)}};const byName=new Map(),named=[];for(const e of es){const k=[e.date,(e.home||'').toLowerCase(),(e.away||'').toLowerCase()].join('|'),cur=byName.get(k);if(!cur){byName.set(k,e);named.push(e)}else merge(cur,e)}const byScore=new Map(),out=[];for(const e of named){const k=(e.team&&Number.isFinite(e.scoreHome)&&Number.isFinite(e.scoreAway))?[e.team,e.date,Math.min(e.scoreHome,e.scoreAway)+'-'+Math.max(e.scoreHome,e.scoreAway)].join('|'):null;if(!k){out.push(e);continue}const cur=byScore.get(k);if(!cur){byScore.set(k,e);out.push(e)}else merge(cur,e)}return out}
+function games(){return dedup([...engineEvents(),...VERIFIED,...manual]).filter(e=>enabled[e.team]).sort((a,b)=>(a.date+' '+(a.time||'')).localeCompare(b.date+' '+(b.time||'')))}
+function eventRow(g,cl){let t=team(g.team),d=new Date(g.date+'T12:00:00');return `<div class="event ${cl.has(g.id)?'conflict':''}${isDone(g)?' done':''}${isToday(g)?' today':''}" data-min="${toMin(g)}"><div class="datebox"><strong>${String(d.getDate()).padStart(2,'0')}</strong><small>${d.toLocaleDateString('it-IT',{month:'short'}).toUpperCase()} · ${g.time}</small></div><div class="sporticon">${t.sport==='Basket'?'🏀':'⚽'}</div><div><div><span class="tag">${t.code}</span><span class="tag comp">${g.type}</span></div><div class="event-title">${g.home} ${hasScore(g)?`<span class="score">${g.scoreHome}-${g.scoreAway}</span>`:'<span class="orange">vs</span>'} ${g.away}</div><div class="meta">${g.venue}</div><div class="source">● ${g.source}${g.verified?' · dato ufficiale':' · inserimento personale'}</div></div><div>${cl.has(g.id)?'<span class="tag" style="color:var(--red);border-color:var(--red)">⚠ sovrapposta</span>':isDone(g)?(hasScore(g)?`<span class="tag done">eseguita ${g.scoreHome}-${g.scoreAway}</span>`:'<span class="tag done">eseguita</span>'):'<span class="tag">in programma</span>'}</div></div>`}
+function renderFilters(){let groups=[...new Set(TEAMS.map(t=>t.group))];$('filters').innerHTML=groups.map(g=>`<div class="team-group"><div class="group-title">${g}</div>${TEAMS.filter(t=>t.group===g).map(t=>`<div class="toggle-row">${avatar(t)}<div><div class="team-name">${t.club} <span class="tag">${t.code}</span></div><div class="team-sub">${t.form}</div></div><div class="switch ${enabled[t.id]?'on':''}" onclick="toggleTeam('${t.id}')"></div></div>`).join('')}</div>`).join('')}
+function renderCalendar(gs,cl){if(!calMonth){const n=new Date();calMonth=new Date(n.getFullYear(),n.getMonth(),1)}const y=calMonth.getFullYear(),mo=calMonth.getMonth(),first=new Date(y,mo,1),startDow=(first.getDay()+6)%7,days=new Date(y,mo+1,0).getDate(),t=new Date(),isThisMonth=t.getFullYear()===y&&t.getMonth()===mo;if($('calTitle'))$('calTitle').textContent=first.toLocaleDateString('it-IT',{month:'long',year:'numeric'}).replace(/^./,c=>c.toUpperCase());let h=['Lun','Mar','Mer','Gio','Ven','Sab','Dom'].map(x=>`<div class="dow">${x}</div>`).join('')+Array(startDow).fill('<div></div>').join('');for(let d=1;d<=days;d++){const iso=`${y}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`,day=gs.filter(g=>g.date===iso),isToday=isThisMonth&&d===t.getDate();h+=`<div class="day ${isToday?'today':''}"><div class="daynum">${d}</div>${day.map(g=>{const tm=team(g.team);return `<div class="cal-event ${cl.has(g.id)?'clash':''}${isDone(g)?' done':''}">${tm.sport==='Basket'?'🏀':'⚽'} <b>${tm.code}</b> ${g.time}${hasScore(g)?' · '+g.scoreHome+'-'+g.scoreAway:''}<br>${tm.club}</div>`}).join('')}</div>`}$('cal').innerHTML=h;scrollCalToday()}
+function scrollCalToday(){const c=$('cal');if(!c||!c.offsetParent)return;const w=c.parentElement;if(!w||w.scrollWidth<=w.clientWidth+4)return;const td=w.querySelector('.day.today');if(!td)return;const r=td.getBoundingClientRect(),wr=w.getBoundingClientRect();w.scrollLeft=Math.max(0,r.left-wr.left+w.scrollLeft-(w.clientWidth-r.width)/2)}
+function renderPlanner(gs,cl){if(!weekStart){const n=new Date();weekStart=new Date(n.getFullYear(),n.getMonth(),n.getDate()-((n.getDay()+6)%7))}const days=[],ises=[];for(let i=0;i<7;i++){const d=new Date(weekStart.getFullYear(),weekStart.getMonth(),weekStart.getDate()+i);days.push(d.toLocaleDateString('it-IT',{weekday:'short'}).replace(/^./,c=>c.toUpperCase())+' '+d.getDate());ises.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`)}if($('planTitle')){const e=new Date(weekStart.getFullYear(),weekStart.getMonth(),weekStart.getDate()+6),m1=weekStart.toLocaleDateString('it-IT',{month:'long'}),m2=e.toLocaleDateString('it-IT',{month:'long'});$('planTitle').textContent='Settimana '+weekStart.getDate()+(m1===m2?'–'+e.getDate()+' '+m1:' '+m1+' – '+e.getDate()+' '+m2)}let hours=[10,11,12,13,14,15,16,17,18,19,20,21,22],h='<div></div>'+days.map(x=>`<div class="phead">${x}</div>`).join('');hours.forEach(hr=>{h+=`<div class="ptime">${hr}:00</div>`;ises.forEach(iso=>{const items=gs.filter(g=>g.date===iso&&+g.time.slice(0,2)===hr);h+=`<div class="pcell">${items.map(g=>{const t=team(g.team);return `<div class="pitem ${cl.has(g.id)?'clash':''}${isDone(g)?' done':''}">${g.time} · ${t.code}${hasScore(g)?' '+g.scoreHome+'-'+g.scoreAway:''}<br>${t.club}</div>`}).join('')}</div>`})});if($('plan'))$('plan').innerHTML=h;const now=new Date(),today=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;if($('planList'))$('planList').innerHTML=ises.map((iso,i)=>{const items=gs.filter(g=>g.date===iso);const body=items.length?items.map(g=>{const t=team(g.team),clash=cl.has(g.id),done=isDone(g);return `<div class="pl-item${clash&&!done?' clash':''}${done?' done':''}"><span class="pl-time">${g.time||'—'}</span><div class="pl-body"><div class="pl-title">${t.sport==='Calcio'?'⚽':'🏀'} <span class="tag">${t.code}</span> ${g.home} ${hasScore(g)?`<b class="pl-score">${g.scoreHome}-${g.scoreAway}</b>`:'vs'} ${g.away}</div><div class="pl-venue">${g.venue||'—'}${g.source?' · '+g.source:''}</div><div class="pl-status">${clash&&!done?'<span class="tag clash-tag" title="Un\'altra gara seguita inizia a distanza di meno di 2 ore">⚠ sovrapposta</span>':done?'<span class="tag done">eseguita</span>':'<span class="tag">in programma</span>'}</div></div></div>`}).join(''):'<div class="pday-empty">nessuna gara in giornata</div>';return `<div class="pday${iso===today?' today':''}"><div class="pday-head"><span class="pday-name">${days[i]}</span><span class="pday-count">${items.length?items.length+(items.length===1?' gara':' gare'):'—'}</span></div>${body}</div>`}).join('')}
+function renderTeams(){$('teamCards').innerHTML=TEAMS.map(t=>`<div class="panel team-card"><div class="team-card-top">${avatar(t)}<div><div class="eyebrow">${t.sport}</div><h3 style="margin:2px 0">${t.club}</h3><span class="tag">${t.code}</span> <span class="meta">${t.form}</span></div></div><p class="source">Fonte: ${t.source}</p>${logoControl(t)}<a href="${t.url}" target="_blank" rel="noopener">Apri fonte ufficiale ↗</a></div>`).join('')}
+const PROVIDERS=[
+{id:'FIP',role:'PRIMARY / OFFICIAL',status:'ATTIVO',scope:'Calendari, risultati e campi'},
+{id:'PLAYBASKET',role:'SECONDARY / ENRICHMENT',status:'ATTIVO',scope:'Validazione, risultati, classifiche e marcatori'},
+{id:'LEGA_SERIE_A',role:'PRIMARY / OFFICIAL',status:'ATTIVO',scope:'Calendario e risultati calcio'},
+{id:'MANUAL',role:'PERSONAL',status:'ATTIVO',scope:'Tornei, amichevoli ed eventi personali'},
+{id:'FIP_STATS_FREE',role:'EXPERIMENTAL',status:'FUTURO',scope:'Solo funzionalità gratuite, non integrato'}];
+function resultGamesFor(id){return dedup([...engineEvents(),...VERIFIED,...manual]).filter(g=>g.team===id && Number.isFinite(g.scoreHome) && Number.isFinite(g.scoreAway))}
+const DC_STOP=new Set(['basket','club','pallacanestro','associazione','polisportiva','societa','virtus','centro','sportiva','calcio','us','ss','cs','bsd','as','sezione']);
+function dcSort(gs){return gs.slice().sort((a,b)=>((a.date||'')+' '+(a.time||'')).localeCompare((b.date||'')+' '+(b.time||'')))}
+function dcAll(id){return dcSort(dedup([...engineEvents(),...VERIFIED,...manual]).filter(g=>g.team===id))}
+function dcSides(g,t){
+  if(g.homeSide===true)return{us:g.scoreHome,them:g.scoreAway,home:true};
+  if(g.homeSide===false)return{us:g.scoreAway,them:g.scoreHome,home:false};
+  const blob=String(g.home||'').toLowerCase(),club=String(t.club||'').toLowerCase(),first=club.split(' ')[0]||'';
+  const al=((typeof STD_ALIASES!=='undefined'&&STD_ALIASES[t.id])||[]).map(a=>a.toLowerCase());
+  const isHome=al.length?(al.some(a=>blob.includes(a))||blob.includes(club)):(blob.includes(club)||blob.includes(first));
+  return isHome?{us:g.scoreHome,them:g.scoreAway,home:true}:{us:g.scoreAway,them:g.scoreHome,home:false};
+}
+function dcPyth(pf,pa,exp){if(!(pf>0)||!(pa>0))return null;const a=Math.pow(pf,exp),b=Math.pow(pa,exp);return a/(a+b)}
+function dcSlope(ys){const n=ys.length;if(n<3)return null;let sx=0,sy=0,sxx=0,sxy=0;for(let i=0;i<n;i++){sx+=i;sy+=ys[i];sxx+=i*i;sxy+=i*ys[i]}const d=n*sxx-sx*sx;if(!d)return null;return(n*sxy-sx*sy)/d}
+function dcChips(f){return f?f.split('').map(c=>`<span class="chip ${c==='W'?'w':c==='D'?'d':'l'}">${c==='W'?'V':c==='D'?'N':'S'}</span>`).join(''):'<span class="meta">—</span>'}
+function dcStreak(f){if(!f)return null;const c=f[f.length-1];let i=f.length;while(i>0&&f[i-1]===c)i--;return{letter:{W:'V',L:'S',D:'N'}[c],n:f.length-i,lbl:{W:'vittorie',L:'sconfitte',D:'pareggi'}[c]}}
+function dcTok(x){return String(x||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9 ]/g,' ').split(/\s+/).filter(Boolean)}
+function dcRows(){const ix=[];(engine.standings||[]).forEach(s=>{(s.rows||[]).forEach(r=>ix.push({row:r,comp:s}))});return ix}
+function dcFindRow(ix,name){const ts=dcTok(name).filter(x=>!DC_STOP.has(x)&&x.length>1);if(!ts.length)return null;let best=null,bs=0;ix.forEach(e=>{const rs=new Set(dcTok(e.row.team).filter(x=>!DC_STOP.has(x)));let sc=0;ts.forEach(t=>{if(rs.has(t))sc+=t.length>=5?3:t.length>=4?2:1});if(sc>bs){bs=sc;best=e}});return bs>=2?best:null}
+function dcNet(row){const p=Number(row.played)||0;if(p<1)return null;return(Number(row.pf||0)-Number(row.pa||0))/p}
+function dcExponent(t){return(t&&t.sport==='Calcio')?1.3:13.9}
+function dcStats(id){
+  const t=team(id),all=dcAll(id);
+  const ss=all.filter(hasScore).map(g=>{const s=dcSides(g,t);return Object.assign({},g,{us:s.us,them:s.them,isHome:s.home,win:s.us>s.them,draw:s.us===s.them})});
+  const st={t,all,ss,n:ss.length,w:0,l:0,d:0,pf:0,pa:0,net:null,home:{n:0,w:0,pf:0,pa:0},away:{n:0,w:0,pf:0,pa:0},slope:null,xw:null,sources:new Set()};
+  ss.forEach(g=>{st.pf+=g.us;st.pa+=g.them;if(g.win)st.w++;else if(g.draw)st.d++;else st.l++;const o=st[g.isHome?'home':'away'];o.n++;o.pf+=g.us;o.pa+=g.them;if(g.win)o.w++;st.sources.add(String(g.source||'').replace(/_/g,' '));(g.corrob||[]).forEach(s=>st.sources.add(String(s).replace(/_/g,' ')))});
+  if(st.n){st.pf/=st.n;st.pa/=st.n;st.net=st.pf-st.pa;['home','away'].forEach(k=>{const o=st[k];if(o.n){o.pf/=o.n;o.pa/=o.n}});
+    const x=dcPyth(st.pf,st.pa,dcExponent(t));st.xw=x===null?null:x*st.n;st.slope=dcSlope(ss.map(g=>g.us-g.them))}
+  return st;
+}
+function dcWinSize(){const v=$('dcWindow');return v?Number(v.value)||0:8}
+function dcForm(st){const n=dcWinSize();const a=n>0?st.ss.slice(-n):st.ss;return a.map(g=>g.draw?'D':g.win?'W':'L').join('')}
+function dcKpis(st){
+  const pct=st.n?Math.round(st.w/st.n*100)+'%':'—';
+  const net=st.n?(st.net>0?'+':'')+st.net.toFixed(1):'—';
+  const pn=st.t.sport==='Calcio'?'Reti':'Punti';
+  const cards=[['Gare giocate',st.n?String(st.n):'—','',st.n?'':'nessun risultato'],
+    ['Vittorie',st.n?`${st.w}-${st.l}${st.d?'-'+st.d:''}`:'—','green',''],
+    ['Percentuale vittorie',st.n?pct:'—','orange',''],
+    [pn+' fatti / gara',st.n?st.pf.toFixed(1):'—','','media stagionale'],
+    [pn+' subiti / gara',st.n?st.pa.toFixed(1):'—','','media stagionale'],
+    [st.t.sport==='Calcio'?'Differenziale medio':'Net rating',net,'orange',st.n?'pt/gara fatti meno subiti':'']];
+  $('dcKpis').innerHTML=cards.map(c=>`<div class="panel metric"><div class="label">${c[0]}</div><div class="value ${c[2]}">${c[1]}</div>${c[3]?`<div class="meta">${c[3]}</div>`:''}</div>`).join('');
+}
+function dcOverview(st,form){
+  const t=st.t,sk=dcStreak(form),totDiff=st.n?Math.round((st.pf-st.pa)*st.n):null;
+  const badges=[`<span class="tag available">✓ Planning</span>`,
+    `<span class="tag ${st.n?'available':'unavailable'}">${st.n?'✓':'○'} Risultati (${st.n})</span>`,
+    `<span class="tag ${st.sources.size?'available':'unavailable'}">${st.sources.size?'✓':'○'} ${st.sources.size?[...st.sources].join(' · '):'nessuna fonte risultati'}</span>`].join('');
+  const small=st.n&&st.n<3?`<span class="badge">Campionato appena iniziato: ${st.n} gare, valori indicativi</span>`:'';
+  $('dcOverview').innerHTML=`<div class="dc-head">${avatar(t)}<h3>${t.club} <span class="tag">${t.code}</span></h3></div>
+  <p class="meta">${t.form} · ${t.sport||'Basket'} · stagione 2026/27</p>
+  <div class="meta" style="margin-top:12px">Stato di forma · ultime ${form.length||0} gare</div>
+  <div class="streak">${dcChips(form)}${sk?`<span class="streaklabel">${sk.n} ${sk.lbl} di fila</span>`:''}</div>
+  <div class="availability">${badges}</div>${small}
+  <div class="kv" style="margin-top:14px">
+    <span class="k">Bilancio casa</span><span class="v">${st.home.n?`${st.home.w}V-${st.home.n-st.home.w}P · ${st.home.pf.toFixed(1)}/${st.home.pa.toFixed(1)}`:'—'}</span>
+    <span class="k">Bilancio trasferta</span><span class="v">${st.away.n?`${st.away.w}V-${st.away.n-st.away.w}P · ${st.away.pf.toFixed(1)}/${st.away.pa.toFixed(1)}`:'—'}</span>
+    <span class="k">Differenziale stagione</span><span class="v ${totDiff===null?'':totDiff>0?'pos':totDiff<0?'neg':''}">${totDiff===null?'—':(totDiff>0?'+':'')+totDiff}</span>
+  </div>`;
+}
+function dcAdvanced(st,ix){
+  if(!st.n){$('dcAdvanced').innerHTML='<div class="empty">Nessun risultato acquisito per questa formazione.</div>';return}
+  const exp=dcExponent(st.t),over=st.xw===null?null:st.w-st.xw,sl=st.slope;
+  const trend=sl===null?'—':`${sl>0?'+':''}${sl.toFixed(2)} pt/gara`;
+  const tCls=sl===null?'':sl>0.25?'pos':sl<-0.25?'neg':'';
+  const tLbl=sl===null?'':sl>0.25?'in salita':sl<-0.25?'in discesa':'stazionario';
+  let sum=0,sc=0;
+  st.ss.forEach(g=>{const e=dcFindRow(ix,g.isHome?g.away:g.home);if(e){const n=dcNet(e.row);if(n!==null){sum+=n;sc++}}});
+  const sos=sc>=2?sum/sc:null;
+  $('dcAdvanced').innerHTML=`<div class="kv">
+    <span class="k">Vittorie attese · Pythagorean (esponente ${exp})</span><span class="v">${st.xw===null?'—':st.xw.toFixed(1)}</span>
+    <span class="k">Scostamento vs vittorie reali</span><span class="v ${over===null?'':over>0.4?'pos':over<-0.4?'neg':''}">${over===null?'—':(over>0?'+':'')+over.toFixed(1)}</span>
+    <span class="k">Andamento differenziale · OLS</span><span class="v ${tCls}">${trend}</span>
+    <span class="k">Tendenza</span><span class="v ${tCls}">${tLbl||'—'}</span>
+    <span class="k">Forza avversari affrontati</span><span class="v">${sos===null?'—':(sos>0?'+':'')+sos.toFixed(1)+' net'}</span>
+    <span class="k">Quoziente offensivo</span><span class="v">${st.pf.toFixed(1)} pt/g</span>
+    <span class="k">Quoziente difensivo</span><span class="v">${st.pa.toFixed(1)} pt/g</span>
+  </div><div class="subnote">Pythagorean expectation (Basket-Reference) stima le vittorie da un campionato completo dal rapporto potenze punti fatti/subiti: uno scostamento positivo indica risultati sopra l'atteso. La tendenza è la pendenza della retta di regressione sul differenziale punti gara per gara. La forza avversari è la media del net rating delle squadre incontrate, ricavata dalle classifiche in file${sos===null?` (da almeno 2 gare con avversario in classifica, ora ${sc})`:''}.</div>`;
+}
+function trendSvg(st){
+  const pn=st.t.sport==='Calcio'?'Reti':'Punti';
+  const ss=st.ss,n=ss.length,W=Math.max(360,n*52+50),H=200,pad={l:34,r:14,t:20,b:42};
+  const peak=Math.max.apply(null,ss.flatMap(g=>[g.us,g.them]).concat([st.pf,st.pa,20]));
+  const maxV=Math.ceil(peak/10)*10,iw=W-pad.l-pad.r,ih=H-pad.t-pad.b;
+  const y=v=>pad.t+ih-(v/maxV)*ih,slot=iw/n,bw=Math.max(6,Math.min(16,slot/3));
+  const grid=[0,.25,.5,.75,1].map(f=>{const v=maxV*f;return `<line x1="${pad.l}" x2="${W-pad.r}" y1="${y(v).toFixed(1)}" y2="${y(v).toFixed(1)}" stroke="rgba(255,255,255,.07)"/><text x="${pad.l-7}" y="${(y(v)+3).toFixed(1)}" text-anchor="end" fill="#97a79e">${v}</text>`}).join('');
+  const avg=`<line x1="${pad.l}" x2="${W-pad.r}" y1="${y(st.pf).toFixed(1)}" y2="${y(st.pf).toFixed(1)}" stroke="#ff7900" stroke-dasharray="5 4" opacity=".6"/><line x1="${pad.l}" x2="${W-pad.r}" y1="${y(st.pa).toFixed(1)}" y2="${y(st.pa).toFixed(1)}" stroke="#5b8def" stroke-dasharray="5 4" opacity=".6"/>`;
+  let bars='',labs='';
+  ss.forEach((g,i)=>{const cx=pad.l+(i+.5)*slot,top=Math.max(y(g.us),y(g.them));
+    bars+=`<rect x="${(cx-bw-2).toFixed(1)}" y="${y(g.us).toFixed(1)}" width="${bw}" height="${(pad.t+ih-y(g.us)).toFixed(1)}" rx="3" fill="#ff7900"><title>${g.date} · ${pn} ${g.us}</title></rect>`;
+    bars+=`<rect x="${(cx+2).toFixed(1)}" y="${y(g.them).toFixed(1)}" width="${bw}" height="${(pad.t+ih-y(g.them)).toFixed(1)}" rx="3" fill="#5b8def"><title>${g.date} · ${pn} ${g.them}</title></rect>`;
+    labs+=`<text x="${cx.toFixed(1)}" y="${(top-6).toFixed(1)}" text-anchor="middle" fill="#f4f7f5" font-weight="700" font-size="10">${g.us}-${g.them}</text>`;
+    labs+=`<text x="${cx.toFixed(1)}" y="${H-22}" text-anchor="middle" fill="#97a79e">${g.date.slice(5).replace('-','/')}</text>`;
+    labs+=`<text x="${cx.toFixed(1)}" y="${H-9}" text-anchor="middle" fill="${g.win?'#38e07b':'#ff5263'}" font-size="9" font-weight="700">${g.win?'V':g.draw?'N':'S'}</text>`});
+  return `<div class="chartbox"><svg class="chart" style="width:${W}px;height:${H}px" viewBox="0 0 ${W} ${H}" role="img" aria-label="${pn} fatti e subiti per gara">${grid}${avg}${bars}${labs}</svg></div>
+  <div class="legend"><span><i style="background:#ff7900"></i>${pn} fatti</span><span><i style="background:#5b8def"></i>${pn} subiti</span><span><i style="background:#ff7900;opacity:.6"></i>medie stagionali (tratteggio)</span><span>V/N/S = esito in campo</span></div>`;
+}
+function dcDetail(g){const arr=engine.details||engine.match_details;if(!Array.isArray(arr)||!g)return null;return arr.find(x=>x.match_id===g.id||x.external_match_id===g.id||x.id===g.id)||null}
+function dcDlt(v,a,up){if(!Number.isFinite(v)||!Number.isFinite(a))return'';const d=v-a;if(Math.abs(d)<0.5)return'<span class="dlt flat">in linea con la media</span>';const good=up?d>0:d<0;return`<span class="dlt ${good?'up':'down'}">${d>0?'+':''}${d.toFixed(1)} vs media</span>`}
+function dcQuartersTable(det){
+  if(!det)return null;
+  const q=det.quarters||det.qs;if(!Array.isArray(q)||!q.length)return null;
+  const hs=q.map(x=>Number(x.h)||0),as=q.map(x=>Number(x.a)||0);
+  let th='';for(let i=0;i<hs.length;i++)th+=`<th${i>3?' class="strong"':''}>${i<4?'Q'+(i+1):'OT'}</th>`;
+  const cells=arr=>arr.map((v,i)=>`<td${i>3?' class="strong"':''}>${v}</td>`).join('');
+  const totH=det.home_score!==undefined&&det.home_score!==null?det.home_score:hs.reduce((a,b)=>a+b,0);
+  const totA=det.away_score!==undefined&&det.away_score!==null?det.away_score:as.reduce((a,b)=>a+b,0);
+  return `<div class="std-wrap"><table class="qt"><thead><tr><th class="lft">Squadra</th>${th}<th class="strong">Tot</th></tr></thead><tbody>
+  <tr><td class="lft">${det.home||'Casa'}</td>${cells(hs)}<td class="strong">${totH}</td></tr>
+  <tr><td class="lft">${det.away||'Ospite'}</td>${cells(as)}<td class="strong">${totA}</td></tr>
+  </tbody></table></div>`;
+}
+function dcMatch(st,keep){
+  const sel=$('dcGame'),n=st.ss.length;
+  if(!n){if(sel){sel.innerHTML='';sel.disabled=true}$('dcMatchTitle').textContent='Analisi gara';$('dcMatch').innerHTML='<div class="empty">Nessun risultato acquisito per questa formazione.</div>';return}
+  sel.disabled=false;
+  sel.innerHTML=st.ss.map((g,i)=>`<option value="${i}">${g.date.slice(5).replace('-','/')} · ${g.home} ${g.scoreHome}-${g.scoreAway} ${g.away}</option>`).join('');
+  let idx=Number(keep);if(!Number.isInteger(idx)||idx<0||idx>=n)idx=n-1;
+  sel.value=String(idx);
+  const g=st.ss[idx],det=dcDetail(g),q=dcQuartersTable(det),players=det&&Array.isArray(det.players)&&det.players.length?det.players:null;
+  const res=g.win?'Vittoria':g.draw?'Pareggio':'Sconfitta',gdiff=g.us-g.them;
+  const pn=st.t.sport==='Calcio'?'Reti':'Punti';
+  $('dcMatchTitle').textContent=`Match Center · ${g.date.split('-').reverse().join('/')}`;
+  const qBlock=q?`<div style="margin-top:14px"><div class="meta" style="margin-bottom:6px">Progressivo e parziali per quarto</div>${q}</div>`:
+    `<div style="margin-top:14px"><span class="badge">Parziali per quarto: non disponibili</span><span class="badge">Progressivo di gara: non disponibile</span></div>`;
+  const pBlock=players?`<div style="margin-top:14px"><div class="meta" style="margin-bottom:6px">Box score giocatori</div>${dcPlayersTable(players)}</div>`:
+    `<div style="margin-top:14px"><span class="badge">Box score giocatori: non disponibile</span></div>`;
+  $('dcMatch').innerHTML=`
+  <div class="matchboard">
+    <div class="mside"><div class="mnm">${g.home}</div><div class="msub">casa${g.venue?' · '+g.venue:''}</div></div>
+    <div style="text-align:center"><div class="bigscore">${g.scoreHome} - ${g.scoreAway}</div><div class="msub">${res} · ${g.source||'—'}${g.quality?' · '+g.quality:''}${g.corrob&&g.corrob.length?` · confermato da ${g.corrob.join(' · ')}`:''}</div></div>
+    <div class="mside r"><div class="mnm">${g.away}</div><div class="msub">trasferta${g.url?` · <a href="${g.url}" target="_blank" rel="noopener">apri fonte ↗</a>`:''}</div></div>
+  </div>
+  <div class="kv" style="margin-top:14px">
+    <span class="k">${pn} fatti in gara</span><span class="v">${g.us} ${dcDlt(g.us,st.pf,true)}</span>
+    <span class="k">${pn} subiti in gara</span><span class="v">${g.them} ${dcDlt(g.them,st.pa,false)}</span>
+    <span class="k">Differenziale gara</span><span class="v ${gdiff>0?'pos':gdiff<0?'neg':''}">${gdiff>0?'+':''}${gdiff} ${dcDlt(gdiff,st.net===null?NaN:st.net,true)}</span>
+  </div>
+  ${qBlock}${pBlock}
+  <div class="subnote">I blocchi marciano solo quando il file engine contiene i dettagli di gara (parziali, progressivo, box score). Finché la fonte non li pubblica il dato non viene simulato.</div>`;
+}
+function dcPlayersTable(rows){
+  const keys=Object.keys(rows[0]||{}).filter(k=>k!=='name'&&k!=='team');
+  return `<div class="std-wrap"><table class="qt"><thead><tr><th class="lft">Giocatore</th><th class="lft">Squadra</th>${keys.map(k=>`<th>${k}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr><td class="lft">${r.name||'—'}</td><td class="lft">${r.team||'—'}</td>${keys.map(k=>`<td>${r[k]===undefined||r[k]===null?'—':r[k]}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+}
+function dcNext(st,ix){
+  const t=st.t,s=t.sport==='Calcio'?4:11;
+  const fut=st.all.filter(g=>!hasScore(g)&&!isDone(g)).slice(0,6);
+  if(!fut.length){$('dcNext').innerHTML='<div class="empty">Nessuna gara futura programmata per questa formazione.</div>';return}
+  const rows=fut.map(g=>{const sd=dcSides(g,t),opp=sd.home?g.away:g.home,e=dcFindRow(ix,opp),onet=e?dcNet(e.row):null;
+    let p=null,marg=null,why='';
+    if(st.net===null||st.n<3)why='servono almeno 3 gare con risultato';
+    else if(onet===null)why='avversario non presente nelle classifiche in file';
+    else{marg=st.net-onet;p=1/(1+Math.exp(-marg/s))}
+    return `<tr><td>${g.date.slice(5).replace('-','/')}<div class="meta">${g.time||''}</div></td><td class="lft">${g.home} vs ${g.away}<div class="meta">${g.venue||''}</div></td><td>${marg===null?'—':`<b class="${marg>0?'pos':'neg'}">${marg>0?'+':''}${marg.toFixed(1)} pt</b>`}</td><td>${p===null?`<span class="meta">${why}</span>`:`<b class="strong">${Math.round(p*100)}%</b>`}</td>`}).join('');
+  $('dcNext').innerHTML=`<div class="std-wrap"><table class="qt"><thead><tr><th>Data</th><th class="lft">Incontro</th><th>Margine atteso</th><th>Prob. ${t.code}</th></tr></thead><tbody>${rows}</tbody></table></div><div class="std-foot"><span class="meta">modello logistico su differenziale di efficienza · scala ${s} pt</span><span class="meta">stima indicativa</span></div>`;
+}
+function dcContext(st,ix){
+  const t=st.t;let e=null;
+  (engine.standings||[]).forEach(s=>{(s.rows||[]).forEach(r=>{const trk=(s.tracked_teams||[]).find(tid=>stdMatch(tid,r.team));if(trk===t.id&&!e)e={row:r,comp:s}})});
+  if(!e)e=dcFindRow(ix,t.club);
+  if(!e){$('dcContext').innerHTML='<div class="empty">Nessuna classifica in file per questa squadra. Esegui il Data Engine o importa un file JSON.</div>';return}
+  const r=e.row,c=e.comp,rows=c.rows||[];
+  const nets=rows.map(dcNet).filter(v=>v!==null),ourNet=dcNet(r);
+  const min=nets.length?Math.min.apply(null,nets.concat([-1])):-1,max=nets.length?Math.max.apply(null,nets.concat([1])):1;
+  const pos=v=>Math.max(0,Math.min(100,((v-min)/((max-min)||1))*100));
+  const avgPf=rows.length?rows.reduce((a,b)=>a+Number(b.pf||0),0)/rows.length:0;
+  const avgPa=rows.length?rows.reduce((a,b)=>a+Number(b.pa||0),0)/rows.length:0;
+  const avgNet=nets.length?nets.reduce((a,b)=>a+b,0)/nets.length:0;
+  const tracked=rows.map(rr=>{const trk=(c.tracked_teams||[]).find(tid=>stdMatch(tid,rr.team));return trk?{rr,trk}:null}).filter(Boolean);
+  const diff=r.diff===null||r.diff===undefined?'':((r.diff>0?'+':'')+r.diff);
+  $('dcContext').innerHTML=`<div class="meta">${c.provider||''} · ${c.mode||'OFFICIAL'} · ${c.competition_name||c.competition_id}</div>
+  <div class="kv" style="margin-top:10px">
+    <span class="k">Posizione</span><span class="v">${r.rank}° su ${rows.length}</span>
+    <span class="k">Punti classifica</span><span class="v">${r.points===null||r.points===undefined?'—':r.points}</span>
+    <span class="k">Bilancio</span><span class="v">${r.wins===null||r.wins===undefined?'—':`${r.wins}V-${r.losses||0}P${r.draws?'-'+r.draws+'N':''}`}</span>
+    <span class="k">${st.t.sport==='Calcio'?'Reti':'Punti'} fatti / subiti</span><span class="v">${r.pf===null||r.pf===undefined?'—':`${r.pf} / ${r.pa}`}</span>
+    <span class="k">Differenziale</span><span class="v ${r.diff>0?'pos':r.diff<0?'neg':''}">${diff||'—'}</span>
+    <span class="k">Media campionato</span><span class="v">${avgPf.toFixed(1)} / ${avgPa.toFixed(1)}</span>
+    <span class="k">Net rating squadra</span><span class="v ${ourNet===null?'':ourNet>0?'pos':ourNet<0?'neg':''}">${ourNet===null?'—':(ourNet>0?'+':'')+ourNet.toFixed(1)}</span>
+    <span class="k">Net rating medio</span><span class="v">${(avgNet>0?'+':'')+avgNet.toFixed(1)}</span>
+  </div>
+  <div class="netbar"><span class="ours" style="left:${pos(ourNet===null?avgNet:ourNet).toFixed(1)}%"></span><span class="avg" style="left:${pos(avgNet).toFixed(1)}%"></span></div>
+  <div class="netlegend"><span>${min.toFixed(1)}</span><span>net rating: squadra (arancione) vs media campionato (blu)</span><span>+${max.toFixed(1)}</span></div>
+  ${tracked.length?`<div class="subnote">Squadre seguite in questo campionato: ${tracked.map(x=>`<b>${x.rr.team}</b> ${x.rr.rank}°`).join(' · ')}</div>`:''}
+  <div class="std-foot"><span class="meta">${rows.length} squadre</span><span class="meta">aggiornato ${String(c.generated_at||'').slice(0,10)||'—'}</span></div>`;
+}
+function dcPlayers(st){
+  const arr=engine.details||engine.match_details;
+  const hasQ=Array.isArray(arr)&&arr.some(d=>(d.quarters||d.qs||[]).length);
+  const hasP=Array.isArray(arr)&&arr.some(d=>(d.players||[]).length);
+  const scorers=Array.isArray(engine.scorers)?engine.scorers:[];
+  let out=`<div class="availability">
+    <span class="badge ${hasQ?'ok':''}">${hasQ?'✓':'○'} Parziali e progressivo</span>
+    <span class="badge ${hasP?'ok':''}">${hasP?'✓':'○'} Box score giocatori</span>
+    <span class="badge ${scorers.length?'ok':''}">${scorers.length?'✓':'○'} Classifica marcatori</span>
+  </div>`;
+  if(scorers.length){
+    out+=scorers.slice(0,2).map(s=>`<div style="margin-top:14px"><div class="meta" style="margin-bottom:6px">${s.competition_name||s.competition_id||'Marcatori'}</div>
+    <div class="std-wrap"><table class="qt"><thead><tr><th>#</th><th class="lft">Giocatore</th><th class="lft">Squadra</th><th>Pti</th><th>Ppg</th></tr></thead><tbody>
+    ${(s.rows||[]).slice(0,15).map(r=>`<tr><td>${r.rank||''}</td><td class="lft">${r.name||'—'}</td><td class="lft">${r.team||'—'}</td><td class="strong">${r.pts===undefined?'—':r.pts}</td><td>${r.ppg===undefined?'—':r.ppg}</td></tr>`).join('')}
+    </tbody></table></div></div>`).join('');
+  }else{
+    out+=`<div class="subnote">Statistiche individuali e classifica marcatori non ancora presenti nel file engine. Restano inattese finché una fonte gratuita non le pubblica: PlayBasket (Serie B, Serie A2, campionati FVG) e Lega Basket (Serie A) sono già state verificate come sorgenti idonee e verranno collegate in un intervento successivo.</div>`;
+  }
+  if(!hasQ||!hasP)out+=`<div class="subnote">I dettagli di gara per singola partita si popolano dal Match Center appena disponibili.</div>`;
+  $('dcPlayers').innerHTML=out;
+}
+function dcResults(st){
+  if(!st.ss.length){$('dcResults').innerHTML='<div class="empty">Nessun risultato acquisito.</div>';return}
+  const items=st.ss.map((g,i)=>({g,i})).reverse();
+  $('dcResults').innerHTML=items.map(({g,i})=>`<div class="event" style="cursor:pointer" title="Apri nel Match Center" onclick="dcOpen(${i})">
+    <div class="datebox"><strong>${g.date.slice(-2)}</strong><small>${new Date(g.date+'T12:00:00').toLocaleDateString('it-IT',{month:'short'}).toUpperCase()}${g.time?' · '+g.time:''}</small></div>
+    <div class="sporticon">${(st.t.sport||'')==='Calcio'?'⚽':'🏀'}</div>
+    <div><span class="tag">${st.t.code}</span><div class="event-title">${g.home} <span class="orange">${g.scoreHome} - ${g.scoreAway}</span> ${g.away}</div>
+    <div class="source">● ${g.source||'—'} · ${g.quality||'SOURCE'}${g.corrob&&g.corrob.length?` · confermato da ${g.corrob.join(' · ')}`:''}</div></div>
+    <div><span class="tag ${g.win?'available':'unavailable'}">${g.win?'VITTORIA':g.draw?'PAREGGIO':'SCONFITTA'}</span></div>
+  </div>`).join('');
+}
+function dcOpen(i){const s=$('dcGame');if(s)s.value=String(i);renderDataCenter();const el=$('dcMatch');if(el&&el.scrollIntoView)el.scrollIntoView({block:'center',behavior:'smooth'})}
+function renderDataCenter(){
+  const sel=$('dcTeam');
+  if(!sel.options.length){sel.innerHTML=TEAMS.map(t=>`<option value="${t.id}">${t.club} · ${t.code}</option>`).join('');sel.value='falconU19G'}
+  const id=sel.value||'falconU19G',keep=$('dcGame')?$('dcGame').value:'';
+  const st=dcStats(id),form=dcForm(st),ix=dcRows();
+  dcKpis(st);
+  dcOverview(st,form);
+  dcAdvanced(st,ix);
+  dcMatch(st,keep);
+  const pn=st.t.sport==='Calcio'?'Reti':'Punti';
+  if($('dcTrendTitle'))$('dcTrendTitle').textContent=pn+' fatti e subiti';
+  $('dcTrendMeta').textContent=st.n?`${st.n} gare · medie ${st.pf.toFixed(1)} / ${st.pa.toFixed(1)}`:'';
+  $('dcTrend').innerHTML=st.n?trendSvg(st):'<div class="empty">Nessun risultato acquisito per questa formazione.</div>';
+  dcNext(st,ix);
+  dcContext(st,ix);
+  dcPlayers(st);
+  dcResults(st);
+}
+const STD_ALIASES={trieste:['PALLACANESTRO','TRIESTE'],udine:['OLD WILD WEST','APU UDINE'],cividale:['GESTECO','CIVIDALE'],falconB:['FALCONSTAR'],dinamo:['DINAMO','GORIZIA'],gradiscaU15G:['GRADISCA'],falconU19G:['FALCONSTAR'],falconU19S:['FALCONSTAR'],isonzoDR2:['ISONZO'],isonzoCF:['ISONZO'],juventus:['JUVENTUS','JUV']}
+function stdMatch(tid,rowTeam){const als=STD_ALIASES[tid]||[tid];const r=' '+(rowTeam||'').toUpperCase()+' ';return als.some(a=>r.includes(a.toUpperCase()))}
+function formChips(form){if(!form)return'<span class="meta">—</span>';return form.split('').map(c=>({W:'w',D:'d',L:'l',V:'w',N:'d',X:'d',P:'l'}[c.toUpperCase()]||'d')).map(k=>`<span class="chip ${k}">${k==='w'?'V':k==='l'?'P':'N'}</span>`).join('')}
+function formFromMatches(tid){const als=[tid].concat(STD_ALIASES[tid]||[]).map(a=>a.toUpperCase());const has=m=>m.home_score!==null&&m.home_score!==undefined&&m.home_score!==''&&m.away_score!==null&&m.away_score!==undefined&&m.away_score!=='';const ms=(engine.matches||[]).filter(m=>(m.tracked_team_ids||[]).includes(tid)&&has(m)).sort((a,b)=>(a.date+' '+(a.time||'')).localeCompare(b.date+' '+(b.time||'')));return ms.slice(-5).map(m=>{const h=(m.home||'').toUpperCase(),a=(m.away||'').toUpperCase();const isHome=als.some(x=>h.includes(x)),isAway=als.some(x=>a.includes(x));const ours=isHome?Number(m.home_score):isAway?Number(m.away_score):Number(m.home_score),opp=isHome?Number(m.away_score):isAway?Number(m.home_score):Number(m.away_score);return ours>opp?'W':ours<opp?'L':'D'}).join('')}
+function renderAnalysis(){
+  const st=(engine.standings||[]).filter(s=>s.mode);
+  const seen=new Set();
+  let placed=0,sources=new Set();
+  st.forEach(s=>{sources.add(s.provider);(s.rows||[]).forEach(r=>{if((s.tracked_teams||[]).some(tid=>stdMatch(tid,r.team))){placed++;seen.add(r.team)}})});
+  if($('stdTitle'))$('stdTitle').textContent='Analisi campionati';
+  if($('stdCount'))$('stdCount').textContent=st.length;
+  if($('stdPlaced'))$('stdPlaced').textContent=placed;
+  if($('stdSources'))$('stdSources').textContent=sources.size;
+  $('stdCards').innerHTML=st.length?st.map(s=>{
+    const rows=s.rows||[];
+    const hasDraws=rows.some(r=>r.draws);
+    const th=`<th>#</th><th>Squadra</th><th>Pti</th><th>G</th><th>V</th>${hasDraws?'<th>N</th>':''}<th>P</th><th>PF</th><th>PS</th><th>Diff</th><th>Form</th>`;
+    const body=rows.map(r=>{
+      const trk=(s.tracked_teams||[]).find(tid=>stdMatch(tid,r.team));
+      const tm=trk?TEAMS.find(x=>x.id===trk):null;
+      const diff=(r.diff===null||r.diff===undefined)?'':((r.diff>0?'+':'')+r.diff);
+      const dc=diff===''?'':(r.diff>0?' pos':r.diff<0?' neg':'');
+      return `<tr class="${trk?'trk':''}"><td class="rank">${r.rank}</td><td><div class="teamcell">${tm?avatar(tm):''}<span class="name">${r.team}</span>${trk?' <span class="tag trktag">seguita</span>':''}</div></td><td class="pts">${r.points}</td><td>${r.played}</td><td>${r.wins}</td>${hasDraws?`<td>${r.draws}</td>`:''}<td>${r.losses}</td><td>${r.pf}</td><td>${r.pa}</td><td class="${dc}">${diff}</td><td>${formChips(r.form||(trk?formFromMatches(trk):''))}</td></tr>`;
+    }).join('');
+    const label=s.competition_name||s.competition_id;
+    const hl=(s.tracked_teams||[]).length?`<span class="tag">${(s.tracked_teams||[]).length} seguite</span>`:'';
+    const upd=String(s.generated_at||'').slice(0,10);
+    return `<div class="panel std-card"><div class="section-head"><div><div class="eyebrow">${s.provider} · ${s.mode||'OFFICIAL'}</div><h3 style="margin:2px 0">${label}</h3></div>${hl}</div><div class="std-wrap"><table class="std"><thead><tr>${th}</tr></thead><tbody>${body}</tbody></table></div>${rows.length?`<div class="std-foot"><span class="meta">${rows.length} squadre in classifica</span><span class="meta">aggiornato ${upd||'—'}</span></div>`:''}</div>`;
+  }).join(''):'<div class="panel notice">Nessuna classifica nel file engine. Esegui il Data Engine o importa un JSON aggiornato.</div>';
+}
+function renderSources(){let ss=[{n:'FIP Risultati',type:'PRIMARY / OFFICIAL',d:'Campionati nazionali e regionali',u:'https://fip.it/risultati/'},{n:'FIP Friuli Venezia Giulia',type:'PRIMARY / OFFICIAL',d:'Campionati regionali FVG',u:'https://friuliveneziagiulia.fip.it/'},{n:'Lega Serie A',type:'PRIMARY / OFFICIAL',d:'Calendario e risultati Juventus',u:'https://www.legaseriea.it/team/juventus'},{n:'PlayBasket',type:'SECONDARY / ENRICHMENT',d:'Validazione, risultati, classifiche e marcatori FVG',u:'https://www.playbasket.it/friuli/u19-gold'},{n:'FIP Stats Area FREE',type:'EXPERIMENTAL',d:'Solo livello gratuito. Provider non ancora integrato.',u:'https://www.fipstatsarea.com/'}];$('sourceCards').innerHTML=ss.map(s=>`<div class="panel team-card"><div class="eyebrow">${s.type}</div><h3>${s.n}</h3><p class="meta">${s.d}</p><a href="${s.u}" target="_blank" rel="noopener">Apri sorgente ↗</a></div>`).join('')}
+function render(){let gs=games(),cl=clashes(gs),up=gs.filter(g=>!isDone(g)||isToday(g));$('dashEvents').innerHTML=up.length?up.map(g=>eventRow(g,cl)).join(''):'<div class="empty">Nessuna gara imminente per le squadre selezionate.</div>';$('agendaEvents').innerHTML=gs.length?gs.map(g=>eventRow(g,cl)).join(''):'<div class="empty">Nessuna gara per le squadre selezionate.</div>';$('mVisible').textContent=gs.length;$('mTeams').textContent=Object.values(enabled).filter(Boolean).length;$('mClash').textContent=cl.size;$('mSources').textContent=PROVIDERS.filter(p=>p.status==='ATTIVO').length;updateEngineStatus();renderFilters();renderCalendar(gs,cl);renderPlanner(gs,cl);renderTeams();renderSources();renderDataCenter();renderAnalysis();$('fTeam').innerHTML=TEAMS.map(t=>`<option value="${t.id}">${t.club} · ${t.code}</option>`).join('');positionEvents()}
+function toggleTeam(id){enabled[id]=!enabled[id];localStorage.setItem('scportal.enabled',JSON.stringify(enabled));render()}function setAll(v){TEAMS.forEach(t=>enabled[t.id]=v);localStorage.setItem('scportal.enabled',JSON.stringify(enabled));render()}function go(id){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===id));closeFilters();if(id==='agenda')setTimeout(positionEvents,0);if(id==='calendar')setTimeout(scrollCalToday,0)}document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>go(b.dataset.view));function closeFilters(){$('side').classList.remove('open');document.body.classList.remove('drawer-open')}function toggleFilters(){const s=$('side');s.classList.toggle('open');document.body.classList.toggle('drawer-open',s.classList.contains('open'))}function openModal(){$('modal').classList.add('open')}function closeModal(){$('modal').classList.remove('open')}function addManual(){let t=team($('fTeam').value),opp=$('fOpponent').value.trim()||'Avversaria da definire';manual.push({id:'m'+Date.now(),team:t.id,date:$('fDate').value,time:$('fTime').value,home:t.club,away:opp,venue:$('fVenue').value||'Luogo da definire',source:'Personale',type:$('fType').value,verified:false});localStorage.setItem('scportal.manual',JSON.stringify(manual));closeModal();render();go('agenda')}function toast(msg){const t=$('toast');if(!t)return;t.textContent=msg;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),3200)}async function loadEngine(report){try{const r=await fetch('data_engine/output/sc_portal_data.json',{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);const d=await r.json();applyEngine(d);if(report)toast('Engine: '+(d.matches||[]).length+' gare acquisite')}catch(e){updateEngineStatus();if(report)toast('Engine non raggiungibile: usa Importa JSON')}}function applyEngine(d){engine={matches:d.matches||[],standings:d.standings||[],meta:d.generated_at||null,summary:d.sync_summary||null,logos:d.team_logos||{}};render()}function updateEngineStatus(){const el=$('engineStatus');if(!el)return;el.textContent=engine.meta?('Data Engine: '+engine.matches.length+' gare / '+((engine.standings||[]).length)+' classifiche · sync '+String(engine.meta).slice(0,16).replace('T',' ')):'Data Engine: non caricato — usa Importa JSON'}function importEngineFile(inp){const f=inp.files&&inp.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{applyEngine(JSON.parse(rd.result));toast('Importate '+engine.matches.length+' gare')}catch(e){toast('JSON non valido')}};rd.readAsText(f);inp.value=''}function calNav(n){calMonth=new Date(calMonth.getFullYear(),calMonth.getMonth()+n,1);render()}function calToday(){const n=new Date();calMonth=new Date(n.getFullYear(),n.getMonth(),1);render()}function planNav(n){weekStart=new Date(weekStart.getFullYear(),weekStart.getMonth(),weekStart.getDate()+n*7);render()}function planToday(){const n=new Date();weekStart=new Date(n.getFullYear(),n.getMonth(),n.getDate()-((n.getDay()+6)%7));render()}render();loadEngine(false);if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script></body></html>

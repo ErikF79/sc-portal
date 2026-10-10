@@ -1,0 +1,18 @@
+# local / non pubblicati
+old/
+*.zip
+authorize.htm
+README_Sports_Center_v0.1.txt
+__pycache__/
+*.pyc
+
+# cache engine (rigenerabili)
+data_engine/raw/
+data_engine/logs/
+data_engine/observations/
+
+# ambiente
+.venv/
+venv/
+.vscode/
+*.log
