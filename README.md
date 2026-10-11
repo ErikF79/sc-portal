@@ -2,7 +2,7 @@
 
 PWA (Progressive Web App) per il **Sport Center**: calendari delle squadre, agenda, planner settimanale, analisi delle classifiche e **statistiche giocatori**.
 
-- **Versione:** 0.7.6
+- **Versione:** 0.7.7
 - **Dati:** tutti derivati da `data_engine/output/sc_portal_data.json` (nessun dato simulato: dove mancano i risultati si mostra `—` / "nessun risultato")
 - **Squadre:** FIP (basket, calendari + risultati), PlayBasket (rose, medie e game log), Lega Basket (box completo Serie A), Lega Serie A (calcio), gare personali
 
@@ -27,6 +27,8 @@ RUN_DATA_ENGINE.bat
 ```
 
 rigenera `data_engine/output/sc_portal_data.json` scaricando i calendari/risultati dalle fonti attive (FIP, PlayBasket, Lega). La PWA rileva il file ad ogni avvio (network-first).
+
+In PWA il pulsante **↻ Aggiorna** (in alto) riscarica il JSON più recente dal server senza svuotare la cache, e in basso nella barra filtri mostra "ultimo aggiornamento" con gare, classifiche e statistiche giocatori. Nota: il pulsante ripubblica solo i dati già presenti sul server; per dati nuovi serve rigenerare l'engine e ripubblicare.
 
 Per aggiornare solo le statistiche giocatori senza ripetere la scansione completa:
 
