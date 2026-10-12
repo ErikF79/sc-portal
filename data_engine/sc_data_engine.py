@@ -505,12 +505,18 @@ def parse_legaseriea(text: str, comp: dict, url: str, parser: str) -> list[dict]
             continue
         home_logo = _seriea_logo(m.get("home"))
         away_logo = _seriea_logo(m.get("away"))
+        api_status = str(m.get("status") or m.get("providerStatus") or "").upper()
+        phase = str(m.get("phase") or "").upper()
+        finished = api_status in ("FINISHED", "PLAYED", "ENDED") or phase == "FULL_TIME"
         home_score = m.get("homeScorePush")
         away_score = m.get("awayScorePush")
         if home_score is None:
             home_score = m.get("providerHomeScore")
         if away_score is None:
             away_score = m.get("providerAwayScore")
+        if not finished:
+            home_score = None
+            away_score = None
         tracked = team_ids(home, away, comp.get("tracked_teams", []))
         if not tracked:
             continue
@@ -533,7 +539,7 @@ def parse_legaseriea(text: str, comp: dict, url: str, parser: str) -> list[dict]
             "venue": m.get("stadiumName"),
             "home_score": home_score,
             "away_score": away_score,
-            "status": "FINISHED" if home_score is not None and away_score is not None else "SCHEDULED",
+            "status": "FINISHED" if finished and home_score is not None and away_score is not None else "SCHEDULED",
             "tracked_team_ids": tracked,
             "source_url": url,
             "observed_at": now(),
