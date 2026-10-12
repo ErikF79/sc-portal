@@ -2,7 +2,7 @@
 
 PWA (Progressive Web App) per il **Sport Center**: calendari delle squadre, agenda, planner settimanale, analisi delle classifiche, **statistiche giocatori** e **schede squadra** con sito ufficiale e grafici.
 
-- **Versione:** 0.8.1
+- **Versione:** 0.8.2
 - **Dati:** tutti derivati da `data_engine/output/sc_portal_data.json` (nessun dato simulato: dove mancano i risultati si mostra `—` / "nessun risultato")
 - **Squadre:** FIP (basket, calendari + risultati), PlayBasket (rose, medie e game log), Lega Basket (box completo Serie A), Lega Serie A (calcio), gare personali
 
@@ -49,6 +49,12 @@ py data_engine/sc_data_engine.py --players-only
 - Dalla vista **Squadre** ogni formazione ha un pulsante **Scheda squadra →** che apre la dashboard dedicata: KPI stagionali, grafico punti fatti/subiti del campionato in corso, **ultime 5 gare**, posizione in classifica e **roster** (dove i dati individuali sono disponibili).
 - Link al **sito ufficiale della società** (URL verificati) accanto al link alla fonte della competizione e ai dati individuali.
 - Dove un dato manca (sito non pubblicato, competizione non ancora pubblicata, roster assente) la scheda mostra uno stato onesto invece di valori simulati.
+
+## Dettaglio gara
+
+- Nella vista **Agenda** il click su una gara già disputata (punteggio presente) apre la finestra **Dettaglio gara**: intestazione con squadre e punteggio, data/ora, campo, competizione e stato.
+- Link diretti alla **fonte** della gara (FIP / PlayBasket / Lega Serie A) e al **sito ufficiale** della squadra (dove verificato).
+- Per il basket con box disponibile (Serie A/A2) viene ricostruito il **tabellino giocatori** di quella gara (minuti, punti, rimbalzi, assist, tiri, valutazione…) filtrando i log individuali; dove la fonte non lo pubblica il dato non viene simulato.
 
 ## Struttura
 
