@@ -34,9 +34,40 @@ jobs:
           path: |
             data_engine/observations
             data_engine/raw/lba_games_seen.json
-          key: sc-portal-engine-${{ github.run_id }}
+          key: sc-portal-engine-v2-${{ github.run_id }}
           restore-keys: |
-            sc-portal-engine-
+            sc-portal-engine-v2-
+
+      - name: Seed observations cache from committed data
+        run: |
+          python - <<'PY'
+          import json, os
+          obs_path = "data_engine/observations/observations.json"
+          existing = []
+          if os.path.exists(obs_path):
+              try:
+                  with open(obs_path, encoding="utf-8") as fh:
+                      existing = json.load(fh)
+              except Exception:
+                  existing = []
+          try:
+              with open("data_engine/output/sc_portal_data.json", encoding="utf-8") as fh:
+                  committed = json.load(fh).get("matches", [])
+          except Exception:
+              committed = []
+          merged = {o["observation_id"]: o for o in existing if o.get("observation_id")}
+          for m in committed:
+              oid = m.get("observation_id")
+              if not oid:
+                  continue
+              merged.setdefault(oid, {k: v for k, v in m.items()
+                                       if k not in ("match_id", "verification_status")})
+          os.makedirs(os.path.dirname(obs_path), exist_ok=True)
+          with open(obs_path, "w", encoding="utf-8") as fh:
+              json.dump(sorted(merged.values(), key=lambda x: (x.get("date") or "", x.get("time") or "", x.get("home") or "")),
+                        fh, ensure_ascii=False, indent=2, sort_keys=True)
+          print(f"observations ready: {len(merged)}")
+          PY
 
       - name: Run data engine
         run: python data_engine/sc_data_engine.py
