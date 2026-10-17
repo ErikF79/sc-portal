@@ -359,6 +359,11 @@ def parse_fip_round_regex(html: str, comp: dict, leg: str, round_no: int, url: s
             if len(teams) < 2:
                 continue
             home, away = teams[-2], teams[-1]
+        tracked = team_ids(home, away, comp.get("tracked_teams", []))
+        if not tracked:
+            continue
+        number = None
+        venue = None
         day, month, year = match.groups()
         date = f"{year}-{MONTHS[month.casefold()]:02d}-{int(day):02d}"
         out.append({

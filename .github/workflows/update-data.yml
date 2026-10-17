@@ -24,6 +24,9 @@ jobs:
         with:
           python-version: "3.13"
 
+      - name: Install engine dependencies
+        run: pip install -r data_engine/requirements.txt
+
       # Cache dell'archivio osservazioni + cache LBA: rende i run robusti e incrementali.
       - name: Restore engine cache
         uses: actions/cache@v4
