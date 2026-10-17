@@ -1,0 +1,78 @@
+name: Update data
+
+on:
+  schedule:
+    # 03:00 UTC ≈ 04:00 ora italiana (CET). GitHub usa orari UTC.
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-data
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      # Cache dell'archivio osservazioni + cache LBA: rende i run robusti e incrementali.
+      - name: Restore engine cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            data_engine/observations
+            data_engine/raw/lba_games_seen.json
+          key: sc-portal-engine-${{ github.run_id }}
+          restore-keys: |
+            sc-portal-engine-
+
+      - name: Run data engine
+        run: python data_engine/sc_data_engine.py
+
+      - name: Safety check (do not publish degraded data)
+        run: |
+          python - <<'PY'
+          import json, subprocess, sys
+          def load(p):
+              try:
+                  with open(p, encoding="utf-8") as fh:
+                      return json.load(fh)
+              except Exception:
+                  return None
+          old = None
+          try:
+              old = json.loads(subprocess.check_output(
+                  ["git", "show", "HEAD:data_engine/output/sc_portal_data.json"]).decode("utf-8"))
+          except Exception:
+              old = None
+          new = load("data_engine/output/sc_portal_data.json")
+          if not new:
+              print("No output produced"); sys.exit(1)
+          n_new = len(new.get("matches", []))
+          n_old = len(old.get("matches", [])) if old else 0
+          print(f"matches: old={n_old} new={n_new}")
+          if old and n_new < n_old:
+              print("Refusing to publish fewer matches than already committed.")
+              sys.exit(1)
+          PY
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "sc-portal-bot"
+          git config user.email "sc-portal-bot@users.noreply.github.com"
+          if [ -n "$(git status --porcelain data_engine/output/sc_portal_data.json)" ]; then
+            git add data_engine/output/sc_portal_data.json
+            git commit -m "data: auto-update $(date -u +%Y-%m-%dT%H:%MZ)"
+            git push
+          else
+            echo "No data change"
+          fi
