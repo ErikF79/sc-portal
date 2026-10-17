@@ -38,6 +38,23 @@ jobs:
       - name: Run data engine
         run: python data_engine/sc_data_engine.py
 
+      - name: Diagnostics
+        run: |
+          python - <<'PY'
+          import json
+          try:
+              d = json.load(open("data_engine/output/sc_portal_data.json", encoding="utf-8"))
+          except Exception as e:
+              print("cannot read output:", e); raise SystemExit(0)
+          print("summary:", json.dumps(d.get("sync_summary"), ensure_ascii=False))
+          for err in (d.get("errors") or [])[:8]:
+              print("ERR:", json.dumps(err, ensure_ascii=False))
+          PY
+          echo "--- connectivity probe ---"
+          curl -sS -o /dev/null -w "fip.it -> %{http_code}\n" "https://fip.it/risultati/" || true
+          curl -sS -o /dev/null -w "playbasket -> %{http_code}\n" "https://www.playbasket.it/" || true
+          curl -sS -o /dev/null -w "api-sdp -> %{http_code}\n" "https://api-sdp.legaseriea.it/" || true
+
       - name: Safety check (do not publish degraded data)
         run: |
           python - <<'PY'
