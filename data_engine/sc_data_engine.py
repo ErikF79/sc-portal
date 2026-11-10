@@ -236,6 +236,24 @@ def team_ids(home: str, away: str, tracked: Iterable[dict]) -> list[str]:
     return found
 
 
+def canonical_team_name(name: str, tracked: Iterable[dict]) -> str:
+    """Nome stabile della squadra seguita, da mostrare nell'app.
+
+    Le fonti (soprattutto FIP) alternano ragione sociale e nome dello sponsor
+    ("NUOVA BASKET ISONZO" -> "Percorso Sicurezza"): a video si usa il nome
+    canonico del club, mentre l'identificativo dell'osservazione continua a
+    usare il nome pubblicato dalla fonte.
+    """
+    low = str(name or "").casefold()
+    if not low:
+        return name
+    for team in tracked:
+        names = [team.get("canonical_name", "")] + list(team.get("aliases", []))
+        if any(alias and alias.casefold() in low for alias in names):
+            return team.get("canonical_name") or team["team_id"]
+    return name
+
+
 def parse_fip_round(html: str, comp: dict, leg: str, round_no: int, url: str, parser: str) -> list[dict]:
     """Parsa una giornata FIP.
 
@@ -301,11 +319,18 @@ def parse_fip_round_dom(html: str, comp: dict, leg: str, round_no: int, url: str
                     if value is not None:
                         venue = " ".join(value.get_text(" ", strip=True).split())
                     break
-        tracked = team_ids(home, away, comp.get("tracked_teams", []))
+        tracked_cfg = comp.get("tracked_teams", [])
+        tracked = team_ids(home, away, tracked_cfg)
         if not tracked:
             continue
+        # L'identificativo usa i nomi pubblicati dalla fonte (la gara viene
+        # aggiornata quando arriva il risultato); a video si mostra il nome
+        # canonico del club, stabile anche se FIP cambia lo sponsor.
+        home_key, away_key = home, away
+        home = canonical_team_name(home, tracked_cfg)
+        away = canonical_team_name(away, tracked_cfg)
         out.append({
-            "observation_id": obs_id("FIP", comp["competition_id"], number or "", home, away, date),
+            "observation_id": obs_id("FIP", comp["competition_id"], number or "", home_key, away_key, date),
             "provider": "FIP",
             "competition_id": comp["competition_id"],
             "season_id": comp["season_id"],
@@ -359,15 +384,19 @@ def parse_fip_round_regex(html: str, comp: dict, leg: str, round_no: int, url: s
             if len(teams) < 2:
                 continue
             home, away = teams[-2], teams[-1]
-        tracked = team_ids(home, away, comp.get("tracked_teams", []))
+        tracked_cfg = comp.get("tracked_teams", [])
+        tracked = team_ids(home, away, tracked_cfg)
         if not tracked:
             continue
         number = None
         venue = None
         day, month, year = match.groups()
         date = f"{year}-{MONTHS[month.casefold()]:02d}-{int(day):02d}"
+        home_key, away_key = home, away
+        home = canonical_team_name(home, tracked_cfg)
+        away = canonical_team_name(away, tracked_cfg)
         out.append({
-            "observation_id": obs_id("FIP", comp["competition_id"], number or "", home, away, date),
+            "observation_id": obs_id("FIP", comp["competition_id"], number or "", home_key, away_key, date),
             "provider": "FIP",
             "competition_id": comp["competition_id"],
             "season_id": comp["season_id"],

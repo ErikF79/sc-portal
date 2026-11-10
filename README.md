@@ -43,7 +43,8 @@ py data_engine/sc_data_engine.py --players-only
 - Fonte rose/medie/game log: **PlayBasket** (tab "Giocatori" nella PWA). Oltre ai punti vengono lette, quando pubblicate, le colonne del game log `TL/T2/T3/RD/RO/FF/FS/PR/PP/Ass/St/Min` (tiri, rimbalzi, falli, palle, assist, stoppate, minuti); il campo `rebounds` è la somma di rimbalzi offensivi e difensivi. Se la fonte lascia le colonne a `-`, l'app mostra solo i punti.
 - Box completo (minuti, rimbalzi, assist, falli, valutazione…) solo per la **Serie A**: le gare vengono ricostruite dalla Lega Basket seguendo i `prev_matches` a partire dalle gare correnti del sitemap; le partite non ancora giocate non producono righe di box.
 - **Divisione Regionale 2** (ex Promozione): su PlayBasket il codice corretto è `lc=DR2` (girone Gorizia/Trieste), non più `lc=PM`.
-- Le competizioni non ancora pubblicate dalla fonte mostrano onestamente "dati non disponibili" (nessun dato inventato). Al 10/11/2026 la pagina **Under 19 Silver FVG** (`lc=U19S`) esiste ma è vuota (nessuna squadra/partita pubblicata): i dati restano `no_data` finché PlayBasket non li pubblica.
+- Su FIP la squadra è pubblicata con il nome dello sponsor ("Percorso Sicurezza"): l'app mostra il nome del club (**Nuova Basket Isonzo**) e usa il nome della fonte solo per riconoscere la gara, così i risultati non si duplicano quando lo sponsor cambia.
+- Le competizioni non ancora pubblicate dalla fonte mostrano onestamente "dati non disponibili" (nessun dato inventato). Al 10/11/2026 il calendario **Under 19 Silver FVG** su FIP c'è, ma PlayBasket non pubblica rose/game log (`lc=U19S` vuota): le statistiche giocatori restano `no_data` finché la fonte non le pubblica.
 
 ## Schede squadra
 
