@@ -1514,7 +1514,8 @@ def run(config_path: Path, only: Optional[str], limit: Optional[int], parser: st
         elif merged[key] != observation:
             updated += 1
         merged[key] = observation
-    observations = sorted(merged.values(), key=lambda x: (x.get("date") or "", x.get("time") or "", x.get("home") or ""))
+    observations = dedupe_observations(list(merged.values()))
+    observations.sort(key=lambda x: (x.get("date") or "", x.get("time") or "", x.get("home") or ""))
     write_json(OBS / "observations.json", observations)
 
     matches = []
@@ -1568,6 +1569,33 @@ def run(config_path: Path, only: Optional[str], limit: Optional[int], parser: st
     log.info("Errori: %d", len(errors))
     log.info("Output: %s", OUT / "sc_portal_data.json")
     return summary
+
+
+def dedupe_observations(observations: list[dict]) -> list[dict]:
+    """Una sola osservazione per gara ufficiale (stesso codice gara FIP).
+
+    Le cache storiche possono contenere la stessa gara con id diversi: gli id
+    passati includevano i nomi delle squadre, che cambiano quando cambia lo
+    sponsor. Vince la riga con risultato e osservazione piu' recenti, cosi' un
+    archivio vecchio non puo' duplicare il calendario.
+    """
+    best: dict[tuple[str, str], dict] = {}
+    out: list[dict] = []
+    for obs in observations:
+        number = obs.get("external_match_id")
+        if obs.get("provider") != "FIP" or not number:
+            out.append(obs)
+            continue
+        key = (str(obs.get("competition_id") or ""), str(number))
+        current = best.get(key)
+        if current is None or _observation_rank(obs) > _observation_rank(current):
+            best[key] = obs
+    return out + list(best.values())
+
+
+def _observation_rank(obs: dict) -> tuple[int, str]:
+    scored = int(obs.get("home_score") is not None and obs.get("away_score") is not None)
+    return scored, str(obs.get("observed_at") or "")
 
 
 def build_parser() -> argparse.ArgumentParser:

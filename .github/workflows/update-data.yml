@@ -34,9 +34,9 @@ jobs:
           path: |
             data_engine/observations
             data_engine/raw/lba_games_seen.json
-          key: sc-portal-engine-v2-${{ github.run_id }}
+          key: sc-portal-engine-v3-${{ github.run_id }}
           restore-keys: |
-            sc-portal-engine-v2-
+            sc-portal-engine-v3-
 
       - name: Seed observations cache from committed data
         run: |
@@ -113,6 +113,13 @@ jobs:
           print(f"matches: old={n_old} new={n_new}")
           if old and n_new < n_old:
               print("Refusing to publish fewer matches than already committed.")
+              sys.exit(1)
+          from collections import Counter
+          fip = [m for m in new.get("matches", []) if m.get("provider") == "FIP" and m.get("external_match_id")]
+          dupes = [k for k, v in Counter((m.get("competition_id"), m["external_match_id"]) for m in fip).items() if v > 1]
+          print(f"FIP duplicate match codes: {len(dupes)}")
+          if dupes:
+              print("Refusing to publish duplicated fixtures:", dupes[:5])
               sys.exit(1)
           PY
 
