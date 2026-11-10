@@ -1,7 +1,7 @@
 {
   "engine_version": "0.7 Full Season",
   "errors": [],
-  "generated_at": "2026-11-10T23:00:12.543861+01:00",
+  "generated_at": "2026-11-10T23:15:23.928079+01:00",
   "matches": [
     {
       "away": "Juventus",
@@ -7403,7 +7403,7 @@
   ],
   "parser": "regex",
   "players": {
-    "generated_at": "2026-11-10T21:47:22.060218+00:00",
+    "generated_at": "2026-11-10T23:15:05.978812+01:00",
     "teams": {
       "carpediemBaskin": {
         "box_source": null,
@@ -10787,15 +10787,317 @@
       "falconU19S": {
         "box_source": null,
         "club": "Falconstar Monfalcone",
+        "club_name": "Falconstar Monfalcone sq.B",
         "competition_id": "fvg_u19s_2026_27_gots",
         "competition_name": "U19 Silver (GO/TS/UD)",
-        "generated_at": "2026-11-10T21:50:29.699383+00:00",
-        "reason": "competizione non ancora pubblicata su PlayBasket",
-        "roster": [],
+        "generated_at": "2026-11-10T23:15:05.978974+01:00",
+        "reason": null,
+        "roster": [
+          {
+            "age": null,
+            "birth_year": null,
+            "box_source": null,
+            "games": 1,
+            "log": [
+              {
+                "date": "2026-11-02",
+                "home": true,
+                "opponent": "Basket Perteole",
+                "points": 3,
+                "result": "W",
+                "score": "86-41"
+              }
+            ],
+            "name": "Barbana Denis",
+            "player_id": "pb_189170",
+            "points": 3,
+            "ppg": 3.0,
+            "profile_url": "https://www.playbasket.it/profile.php?exteid=4&extobj=8528&subj=1&season=2027&obj=189170&action=view&eid=5",
+            "role": null,
+            "roster_points": 3,
+            "roster_ppg": 3.0,
+            "top": 3
+          },
+          {
+            "age": null,
+            "birth_year": null,
+            "box_source": null,
+            "games": 1,
+            "log": [
+              {
+                "date": "2026-11-02",
+                "home": true,
+                "opponent": "Basket Perteole",
+                "points": 7,
+                "result": "W",
+                "score": "86-41"
+              }
+            ],
+            "name": "Bon Luca",
+            "player_id": "pb_198371",
+            "points": 7,
+            "ppg": 7.0,
+            "profile_url": "https://www.playbasket.it/profile.php?exteid=4&extobj=8528&subj=1&season=2027&obj=198371&action=view&eid=5",
+            "role": null,
+            "roster_points": 7,
+            "roster_ppg": 7.0,
+            "top": 7
+          },
+          {
+            "age": null,
+            "birth_year": null,
+            "box_source": null,
+            "games": 1,
+            "log": [
+              {
+                "date": "2026-11-02",
+                "home": true,
+                "opponent": "Basket Perteole",
+                "points": 4,
+                "result": "W",
+                "score": "86-41"
+              }
+            ],
+            "name": "Dapas Matteo",
+            "player_id": "pb_190336",
+            "points": 4,
+            "ppg": 4.0,
+            "profile_url": "https://www.playbasket.it/profile.php?exteid=4&extobj=8528&subj=1&season=2027&obj=190336&action=view&eid=5",
+            "role": null,
+            "roster_points": 4,
+            "roster_ppg": 4.0,
+            "top": 4
+          },
+          {
+            "age": 18,
+            "birth_year": 2008,
+            "box_source": null,
+            "games": 1,
+            "log": [
+              {
+                "date": "2026-11-02",
+                "home": true,
+                "opponent": "Basket Perteole",
+                "points": 0,
+                "result": "W",
+                "score": "86-41"
+              }
+            ],
+            "name": "Facchinetti Gianluca",
+            "player_id": "pb_177126",
+            "points": 0,
+            "ppg": 0.0,
+            "profile_url": "https://www.playbasket.it/profile.php?exteid=4&extobj=8528&subj=1&season=2027&obj=177126&action=view&eid=5",
+            "role": null,
+            "roster_points": 0,
+            "roster_ppg": 0.0,
+            "top": 0
+          },
+          {
+            "age": null,
+            "birth_year": null,
+            "box_source": null,
+            "games": 1,
+            "log": [
+              {
+                "date": "2026-11-02",
+                "home": true,
+                "opponent": "Basket Perteole",
+                "points": 13,
+                "result": "W",
+                "score": "86-41"
+              }
+            ],
+            "name": "Ferino Francesco",
+            "player_id": "pb_215295",
+            "points": 13,
+            "ppg": 13.0,
+            "profile_url": "https://www.playbasket.it/profile.php?exteid=4&extobj=8528&subj=1&season=2027&obj=215295&action=view&eid=5",
+            "role": null,
+            "roster_points": 13,
+            "roster_ppg": 13.0,
+            "top": 13
+          },
+          {
+            "age": null,
+            "birth_year": null,
+            "box_source": null,
+            "games": 1,
+            "log": [
+              {
+                "date": "2026-11-02",
+                "home": true,
+                "opponent": "Basket Perteole",
+                "points": 8,
+                "result": "W",
+                "score": "86-41"
+              }
+            ],
+            "name": "Franceschini Nicholas",
+            "player_id": "pb_189158",
+            "points": 8,
+            "ppg": 8.0,
+            "profile_url": "https://www.playbasket.it/profile.php?exteid=4&extobj=8528&subj=1&season=2027&obj=189158&action=view&eid=5",
+            "role": null,
+            "roster_points": 8,
+            "roster_ppg": 8.0,
+            "top": 8
+          },
+          {
+            "age": null,
+            "birth_year": null,
+            "box_source": null,
+            "games": 1,
+            "log": [
+              {
+                "date": "2026-11-02",
+                "home": true,
+                "opponent": "Basket Perteole",
+                "points": 8,
+                "result": "W",
+                "score": "86-41"
+              }
+            ],
+            "name": "Glavich Riccardo",
+            "player_id": "pb_215293",
+            "points": 8,
+            "ppg": 8.0,
+            "profile_url": "https://www.playbasket.it/profile.php?exteid=4&extobj=8528&subj=1&season=2027&obj=215293&action=view&eid=5",
+            "role": null,
+            "roster_points": 8,
+            "roster_ppg": 8.0,
+            "top": 8
+          },
+          {
+            "age": null,
+            "birth_year": null,
+            "box_source": null,
+            "games": 1,
+            "log": [
+              {
+                "date": "2026-11-02",
+                "home": true,
+                "opponent": "Basket Perteole",
+                "points": 8,
+                "result": "W",
+                "score": "86-41"
+              }
+            ],
+            "name": "Gleria Riccardo",
+            "player_id": "pb_190331",
+            "points": 8,
+            "ppg": 8.0,
+            "profile_url": "https://www.playbasket.it/profile.php?exteid=4&extobj=8528&subj=1&season=2027&obj=190331&action=view&eid=5",
+            "role": null,
+            "roster_points": 8,
+            "roster_ppg": 8.0,
+            "top": 8
+          },
+          {
+            "age": null,
+            "birth_year": null,
+            "box_source": null,
+            "games": 1,
+            "log": [
+              {
+                "date": "2026-11-02",
+                "home": true,
+                "opponent": "Basket Perteole",
+                "points": 11,
+                "result": "W",
+                "score": "86-41"
+              }
+            ],
+            "name": "Moresan Gianluca",
+            "player_id": "pb_209098",
+            "points": 11,
+            "ppg": 11.0,
+            "profile_url": "https://www.playbasket.it/profile.php?exteid=4&extobj=8528&subj=1&season=2027&obj=209098&action=view&eid=5",
+            "role": null,
+            "roster_points": 11,
+            "roster_ppg": 11.0,
+            "top": 11
+          },
+          {
+            "age": null,
+            "birth_year": null,
+            "box_source": null,
+            "games": 1,
+            "log": [
+              {
+                "date": "2026-11-02",
+                "home": true,
+                "opponent": "Basket Perteole",
+                "points": 2,
+                "result": "W",
+                "score": "86-41"
+              }
+            ],
+            "name": "Titonel Leonardo",
+            "player_id": "pb_232059",
+            "points": 2,
+            "ppg": 2.0,
+            "profile_url": "https://www.playbasket.it/profile.php?exteid=4&extobj=8528&subj=1&season=2027&obj=232059&action=view&eid=5",
+            "role": null,
+            "roster_points": 2,
+            "roster_ppg": 2.0,
+            "top": 2
+          },
+          {
+            "age": 18,
+            "birth_year": 2008,
+            "box_source": null,
+            "games": 1,
+            "log": [
+              {
+                "date": "2026-11-02",
+                "home": true,
+                "opponent": "Basket Perteole",
+                "points": 6,
+                "result": "W",
+                "score": "86-41"
+              }
+            ],
+            "name": "Vacca Christian",
+            "player_id": "pb_157200",
+            "points": 6,
+            "ppg": 6.0,
+            "profile_url": "https://www.playbasket.it/profile.php?exteid=4&extobj=8528&subj=1&season=2027&obj=157200&action=view&eid=5",
+            "role": "AP",
+            "roster_points": 6,
+            "roster_ppg": 6.0,
+            "top": 6
+          },
+          {
+            "age": null,
+            "birth_year": null,
+            "box_source": null,
+            "games": 1,
+            "log": [
+              {
+                "date": "2026-11-02",
+                "home": true,
+                "opponent": "Basket Perteole",
+                "points": 16,
+                "result": "W",
+                "score": "86-41"
+              }
+            ],
+            "name": "Visintin Daniele",
+            "player_id": "pb_189166",
+            "points": 16,
+            "ppg": 16.0,
+            "profile_url": "https://www.playbasket.it/profile.php?exteid=4&extobj=8528&subj=1&season=2027&obj=189166&action=view&eid=5",
+            "role": null,
+            "roster_points": 16,
+            "roster_ppg": 16.0,
+            "top": 16
+          }
+        ],
         "season_id": "2026_27",
         "source": "PLAYBASKET",
-        "source_url": "https://www.playbasket.it/friuli/league.php?lt=2&lf=M&lr=FR&lc=U19S&season=2027&mod=tm&lg=1",
-        "status": "no_data",
+        "source_url": "https://www.playbasket.it/club.php?lt=2&lf=M&lr=FR&lp=TS&lc=U19&season=2027&mod=rs&obj=8528&action=view&eid=4",
+        "status": "ok",
         "team_id": "falconU19S"
       },
       "gradiscaU15G": {
@@ -16533,10 +16835,10 @@
     "new_matches": 0,
     "pages_completed": 181,
     "pages_requested": 181,
-    "players_games": 443,
-    "players_roster": 102,
+    "players_games": 455,
+    "players_roster": 114,
     "players_teams": 11,
-    "players_with_data": 7,
+    "players_with_data": 8,
     "total_matches": 282,
     "updated_matches": 235
   },

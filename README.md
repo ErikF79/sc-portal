@@ -2,7 +2,7 @@
 
 PWA (Progressive Web App) per il **Sport Center**: calendari delle squadre, agenda, planner settimanale, analisi delle classifiche, **statistiche giocatori** e **schede squadra** con sito ufficiale e grafici.
 
-- **Versione:** 0.8.4
+- **Versione:** 0.8.5
 - **Dati:** tutti derivati da `data_engine/output/sc_portal_data.json` (nessun dato simulato: dove mancano i risultati si mostra `—` / "nessun risultato")
 - **Squadre:** FIP (basket, calendari + risultati), PlayBasket (rose, medie e game log), Lega Basket (box completo Serie A), Lega Serie A (calcio), CarpeDiem Baskin (calendario Baskin CSAIN/EISI), gare personali
 
@@ -44,7 +44,7 @@ py data_engine/sc_data_engine.py --players-only
 - Box completo (minuti, rimbalzi, assist, falli, valutazione…) solo per la **Serie A**: le gare vengono ricostruite dalla Lega Basket seguendo i `prev_matches` a partire dalle gare correnti del sitemap; le partite non ancora giocate non producono righe di box.
 - **Divisione Regionale 2** (ex Promozione): su PlayBasket il codice corretto è `lc=DR2` (girone Gorizia/Trieste), non più `lc=PM`.
 - Su FIP la squadra è pubblicata a volte con il nome dello sponsor ("Percorso Sicurezza" per la Nuova Basket Isonzo): l'app mostra il nome del club e riconosce la gara dal **codice gara FIP**, così cambi di nome non creano gare duplicate e i risultati continuano ad aggiornarsi.
-- Le competizioni non ancora pubblicate dalla fonte mostrano onestamente "dati non disponibili" (nessun dato inventato). Al 10/11/2026 il calendario **Under 19 Silver FVG** su FIP c'è, ma PlayBasket non pubblica rose/game log (`lc=U19S` vuota): le statistiche giocatori restano `no_data` finché la fonte non le pubblica.
+- Le competizioni non ancora pubblicate dalla fonte mostrano onestamente "dati non disponibili" (nessun dato inventato). Per la **Under 19 Silver FVG** il calendario arriva da FIP; PlayBasket non usa il codice `lc=U19S` ma pubblica lo stesso girone Gorizia/Trieste come **Under 19 Reg** (`lt=2&lf=M&lr=FR&lp=TS&lc=U19&lg=1`): da lì arrivano rosa e game log di Falconstar Monfalcone sq.B.
 
 ## Baskin CarpeDiem
 

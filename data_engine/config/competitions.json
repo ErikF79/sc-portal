@@ -57,7 +57,7 @@
       "scan": {"mode":"CONFIGURED_FALLBACK","andata_code":"1","ritorno_code":"0","configured_rounds":{"andata":7,"ritorno":7}},
       "players": {
         "provider": "PLAYBASKET",
-        "league_url": "https://www.playbasket.it/friuli/league.php?lt=2&lf=M&lr=FR&lc=U19S&season=2027&mod=tm&lg=1",
+        "league_url": "https://www.playbasket.it/friuli/league.php?lt=2&lf=M&lr=FR&lp=TS&lc=U19&season=2027&mod=tm&lg=1",
         "team_match": {"falconU19S": ["falconstar"]}
       },
       "tracked_teams": [
