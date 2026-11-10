@@ -126,6 +126,21 @@
       ]
     },
     {
+      "competition_id": "baskin_carpediem_2026_27", "season_id": "2026_27", "provider": "CARPEDIEM_BASKIN", "enabled": true,
+      "name": "Baskin CarpeDiem",
+      "url": "https://erikf79.github.io/carpediem-baskin/data.json",
+      "source_page": "https://erikf79.github.io/carpediem-baskin/",
+      "players": {
+        "mode": "no_data",
+        "provider": "CARPEDIEM_BASKIN",
+        "source_url": "https://erikf79.github.io/carpediem-baskin/",
+        "reason": "la pagina pubblica del club non espone statistiche individuali"
+      },
+      "tracked_teams": [
+        {"team_id":"carpediemBaskin","canonical_name":"CarpeDiem Baskin","aliases":["CARPEDIEM BASKIN","CARPE DIEM BASKIN"]}
+      ]
+    },
+    {
       "competition_id": "seriea_2026_27_juventus", "season_id": "2026_27", "provider": "LEGA_SERIE_A", "enabled": true,
       "name": "Serie A Enilive",
       "url": "https://api-sdp.legaseriea.it/v1/serie-a/football/seasons/serie-a%3A%3AFootball_Season%3A%3Aed7fdc2a3e7b408b942ec177b7b956b5/matches?relevantTeamIds=serie-a%3A%3AFootball_Team%3A%3A0ae9210dce6f4f9b9d50aeeb19b0d371&locale=it-IT",

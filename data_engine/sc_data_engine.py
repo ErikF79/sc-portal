@@ -503,6 +503,86 @@ def parse_playbasket(html: str, comp: dict, url: str, parser: str) -> list[dict]
     return out
 
 
+def _baskin_abs_url(value: Any, base: str) -> Optional[str]:
+    """URL relativa dello snapshot CarpeDiem -> assoluta sulla pagina pubblica."""
+    raw = str(value or "").strip()
+    if not raw:
+        return None
+    if raw.startswith(("http://", "https://")):
+        return raw
+    return urlparse.urljoin(base, raw.lstrip("/"))
+
+
+def parse_carpediem_baskin(text: str, comp: dict, url: str, parser: str) -> list[dict]:
+    """Parsa lo snapshot JSON pubblico della pagina CarpeDiem Baskin.
+
+    La pagina (https://erikf79.github.io/carpediem-baskin/) pubblica un
+    data.json generato dal gestionale del club con calendario, squadre e
+    palestre. Si acquisiscono solo le gare pubblicate; i dati personali dei
+    giocatori (email, telefono) presenti nello snapshot non vengono letti.
+    La fonte non pubblica punteggi: le gare restano 'SCHEDULED' finche' il
+    club non li inserisce (nessun risultato inventato).
+    """
+    payload = json.loads(text)
+    base = comp.get("source_page") or url
+    source_page = comp.get("source_page") or url
+    out: list[dict] = []
+    for item in payload.get("matches") or []:
+        if not isinstance(item, dict) or item.get("published") is False:
+            continue
+        home_team = item.get("home_team") or {}
+        away_team = item.get("away_team") or {}
+        home = " ".join(str(home_team.get("name") or "").split())
+        away = " ".join(str(away_team.get("name") or "").split())
+        date = str(item.get("match_date") or "").strip()
+        if not home or not away or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", date):
+            continue
+        tracked = team_ids(home, away, comp.get("tracked_teams", []))
+        if not tracked:
+            continue
+        time_value = str(item.get("match_time") or "").strip()
+        time_value = time_value[:5] if re.fullmatch(r"\d{2}:\d{2}(:\d{2})?", time_value) else None
+        home_score, away_score = item.get("home_score"), item.get("away_score")
+        finished = all(isinstance(v, int) and not isinstance(v, bool) for v in (home_score, away_score))
+        venue = item.get("venue") or {}
+        venue_name = " ".join(str(venue.get("name") or "").split()) or None
+        venue_address = " ".join(str(venue.get("address") or "").split()) or None
+        if venue_name and venue_address and venue_address.casefold() not in venue_name.casefold():
+            venue_text = f"{venue_name} — {venue_address}"
+        else:
+            venue_text = venue_name or venue_address
+        federation = (item.get("federation") or {}).get("code") or "BASKIN"
+        competition = str(item.get("competition") or "").strip()
+        competition_type = "Torneo" if "torneo" in competition.casefold() else federation
+        match_key = f"carpediem-baskin:{item.get('id')}"
+        out.append({
+            "observation_id": obs_id("CARPEDIEM_BASKIN", comp["competition_id"], match_key),
+            "provider": "CARPEDIEM_BASKIN",
+            "competition_id": comp["competition_id"],
+            "season_id": comp.get("season_id"),
+            "leg": None,
+            "round": item.get("matchday"),
+            "external_match_id": match_key,
+            "home": home,
+            "away": away,
+            "home_logo": _baskin_abs_url(home_team.get("logo_url"), base),
+            "away_logo": _baskin_abs_url(away_team.get("logo_url"), base),
+            "date": date,
+            "time": time_value,
+            "venue": venue_text,
+            "home_score": home_score if finished else None,
+            "away_score": away_score if finished else None,
+            "status": "FINISHED" if finished else "SCHEDULED",
+            "competition_name": competition or None,
+            "competition_type": competition_type,
+            "tracked_team_ids": tracked,
+            "source_url": source_page,
+            "source_updated_at": payload.get("generated_at"),
+            "observed_at": now(),
+        })
+    return out
+
+
 SERIEA_LOGO_CDN = "https://img.legaseriea.it/"
 
 
@@ -1260,6 +1340,25 @@ def collect_players(config: dict, policy: dict, errors: list[dict], only: Option
             continue
         comp_id = comp["competition_id"]
         tracked = comp.get("tracked_teams", [])
+        if pcfg.get("mode") == "no_data":
+            # Competizioni la cui fonte pubblica il calendario ma non le
+            # statistiche individuali: stato onesto, nessun dato inventato.
+            for t in tracked:
+                payload["teams"][t["team_id"]] = {
+                    "team_id": t["team_id"],
+                    "competition_id": comp_id,
+                    "competition_name": comp.get("name", comp_id),
+                    "season_id": comp.get("season_id"),
+                    "club": t.get("canonical_name"),
+                    "status": "no_data",
+                    "reason": pcfg.get("reason") or "la fonte non pubblica statistiche individuali",
+                    "source": pcfg.get("provider", comp["provider"]),
+                    "source_url": pcfg.get("source_url") or comp.get("source_page") or comp.get("url"),
+                    "box_source": None,
+                    "generated_at": now(),
+                    "roster": [],
+                }
+            continue
         for t in tracked:
             payload["teams"][t["team_id"]] = {
                 "team_id": t["team_id"],
@@ -1420,6 +1519,7 @@ def scan_single_url(comp: dict, policy: dict, parser: str, parse_single: Any) ->
 _SINGLE_URL_PARSERS = {
     "PLAYBASKET": parse_playbasket,
     "LEGA_SERIE_A": parse_legaseriea,
+    "CARPEDIEM_BASKIN": parse_carpediem_baskin,
 }
 
 

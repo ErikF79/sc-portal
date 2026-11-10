@@ -2,9 +2,9 @@
 
 PWA (Progressive Web App) per il **Sport Center**: calendari delle squadre, agenda, planner settimanale, analisi delle classifiche, **statistiche giocatori** e **schede squadra** con sito ufficiale e grafici.
 
-- **Versione:** 0.8.3
+- **Versione:** 0.8.4
 - **Dati:** tutti derivati da `data_engine/output/sc_portal_data.json` (nessun dato simulato: dove mancano i risultati si mostra `—` / "nessun risultato")
-- **Squadre:** FIP (basket, calendari + risultati), PlayBasket (rose, medie e game log), Lega Basket (box completo Serie A), Lega Serie A (calcio), gare personali
+- **Squadre:** FIP (basket, calendari + risultati), PlayBasket (rose, medie e game log), Lega Basket (box completo Serie A), Lega Serie A (calcio), CarpeDiem Baskin (calendario Baskin CSAIN/EISI), gare personali
 
 ## Avvio locale
 
@@ -45,6 +45,12 @@ py data_engine/sc_data_engine.py --players-only
 - **Divisione Regionale 2** (ex Promozione): su PlayBasket il codice corretto è `lc=DR2` (girone Gorizia/Trieste), non più `lc=PM`.
 - Su FIP la squadra è pubblicata a volte con il nome dello sponsor ("Percorso Sicurezza" per la Nuova Basket Isonzo): l'app mostra il nome del club e riconosce la gara dal **codice gara FIP**, così cambi di nome non creano gare duplicate e i risultati continuano ad aggiornarsi.
 - Le competizioni non ancora pubblicate dalla fonte mostrano onestamente "dati non disponibili" (nessun dato inventato). Al 10/11/2026 il calendario **Under 19 Silver FVG** su FIP c'è, ma PlayBasket non pubblica rose/game log (`lc=U19S` vuota): le statistiche giocatori restano `no_data` finché la fonte non le pubblica.
+
+## Baskin CarpeDiem
+
+- Fonte: la pagina pubblica del club **https://erikf79.github.io/carpediem-baskin/** (snapshot `data.json`, gestita dal gestionale della società). Il Data Engine legge solo le gare pubblicate: data, ora, competizione (CSAIN/EISI/Torneo), squadre, palestra.
+- La fonte **non pubblica punteggi né statistiche individuali**: le gare restano "in programma" e nessun risultato viene inventato. I dati personali dei giocatori presenti nello snapshot (email, telefono) non vengono acquisiti.
+- La competizione è secondaria (`verification_status: SECONDARY`): nell'app il dettaglio gara rimanda alla pagina del club.
 
 ## Schede squadra
 
