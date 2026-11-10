@@ -323,14 +323,14 @@ def parse_fip_round_dom(html: str, comp: dict, leg: str, round_no: int, url: str
         tracked = team_ids(home, away, tracked_cfg)
         if not tracked:
             continue
-        # L'identificativo usa i nomi pubblicati dalla fonte (la gara viene
-        # aggiornata quando arriva il risultato); a video si mostra il nome
-        # canonico del club, stabile anche se FIP cambia lo sponsor.
+        # Identificativo basato sul codice gara FIP: resta lo stesso anche se
+        # la fonte cambia nome/sponsor alla squadra (in passato ogni rinomina
+        # creava un doppione). I nomi servono solo per la visualizzazione.
         home_key, away_key = home, away
         home = canonical_team_name(home, tracked_cfg)
         away = canonical_team_name(away, tracked_cfg)
         out.append({
-            "observation_id": obs_id("FIP", comp["competition_id"], number or "", home_key, away_key, date),
+            "observation_id": obs_id("FIP", comp["competition_id"], number or f"{home_key}|{away_key}|{date}"),
             "provider": "FIP",
             "competition_id": comp["competition_id"],
             "season_id": comp["season_id"],
@@ -396,7 +396,7 @@ def parse_fip_round_regex(html: str, comp: dict, leg: str, round_no: int, url: s
         home = canonical_team_name(home, tracked_cfg)
         away = canonical_team_name(away, tracked_cfg)
         out.append({
-            "observation_id": obs_id("FIP", comp["competition_id"], number or "", home_key, away_key, date),
+            "observation_id": obs_id("FIP", comp["competition_id"], number or f"{home_key}|{away_key}|{date}"),
             "provider": "FIP",
             "competition_id": comp["competition_id"],
             "season_id": comp["season_id"],
