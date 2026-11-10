@@ -7204,7 +7204,7 @@
   ],
   "parser": "regex",
   "players": {
-    "generated_at": "2026-11-10T10:46:19.976363+00:00",
+    "generated_at": "2026-11-10T20:59:58.000400+01:00",
     "teams": {
       "cividale": {
         "box_source": null,
@@ -10617,15 +10617,471 @@
       "isonzoDR2": {
         "box_source": null,
         "club": "Nuova Basket Isonzo",
+        "club_name": "Nuova Basket Isonzo",
         "competition_id": "fvg_pm_2026_27_gots",
-        "competition_name": "Promozione Maschile (GO/TS)",
-        "generated_at": "2026-11-10T10:49:08.491212+00:00",
-        "reason": "competizione non ancora pubblicata su PlayBasket",
-        "roster": [],
+        "competition_name": "Divisione Regionale 2 (GO/TS)",
+        "generated_at": "2026-11-10T20:59:28.625684+01:00",
+        "reason": null,
+        "roster": [
+          {
+            "age": null,
+            "birth_year": null,
+            "box_source": null,
+            "games": 1,
+            "log": [
+              {
+                "date": "2026-11-06",
+                "home": true,
+                "opponent": "Cus Trieste",
+                "points": 3,
+                "result": "W",
+                "score": "66-55"
+              }
+            ],
+            "name": "Bean Luca",
+            "player_id": "pb_188801",
+            "points": 3,
+            "ppg": 3.0,
+            "profile_url": "https://www.playbasket.it/profile.php?exteid=4&extobj=1198&subj=1&season=2027&obj=188801&action=view&eid=5",
+            "role": null,
+            "roster_points": 3,
+            "roster_ppg": 3.0,
+            "top": 3
+          },
+          {
+            "age": 31,
+            "birth_year": 1995,
+            "box_source": null,
+            "games": 2,
+            "log": [
+              {
+                "date": "2026-10-30",
+                "home": false,
+                "opponent": "US Goriziana",
+                "points": 6,
+                "result": "W",
+                "score": "58-80"
+              },
+              {
+                "date": "2026-11-06",
+                "home": true,
+                "opponent": "Cus Trieste",
+                "points": 7,
+                "result": "W",
+                "score": "66-55"
+              }
+            ],
+            "name": "Beltrame Alessio",
+            "player_id": "pb_16110",
+            "points": 13,
+            "ppg": 6.5,
+            "profile_url": "https://www.playbasket.it/profile.php?exteid=4&extobj=1198&subj=1&season=2027&obj=16110&action=view&eid=5",
+            "role": "PM",
+            "roster_points": 13,
+            "roster_ppg": 6.5,
+            "top": 7
+          },
+          {
+            "age": 22,
+            "birth_year": 2004,
+            "box_source": null,
+            "games": 2,
+            "log": [
+              {
+                "date": "2026-10-30",
+                "home": false,
+                "opponent": "US Goriziana",
+                "points": 4,
+                "result": "W",
+                "score": "58-80"
+              },
+              {
+                "date": "2026-11-06",
+                "home": true,
+                "opponent": "Cus Trieste",
+                "points": 2,
+                "result": "W",
+                "score": "66-55"
+              }
+            ],
+            "name": "Blazica Francesco",
+            "player_id": "pb_117290",
+            "points": 6,
+            "ppg": 3.0,
+            "profile_url": "https://www.playbasket.it/profile.php?exteid=4&extobj=1198&subj=1&season=2027&obj=117290&action=view&eid=5",
+            "role": "AP",
+            "roster_points": 6,
+            "roster_ppg": 3.0,
+            "top": 4
+          },
+          {
+            "age": 19,
+            "birth_year": 2007,
+            "box_source": null,
+            "games": 2,
+            "log": [
+              {
+                "date": "2026-10-30",
+                "home": false,
+                "opponent": "US Goriziana",
+                "points": 9,
+                "result": "W",
+                "score": "58-80"
+              },
+              {
+                "date": "2026-11-06",
+                "home": true,
+                "opponent": "Cus Trieste",
+                "points": 5,
+                "result": "W",
+                "score": "66-55"
+              }
+            ],
+            "name": "Boldrin Samuele",
+            "player_id": "pb_205854",
+            "points": 14,
+            "ppg": 7.0,
+            "profile_url": "https://www.playbasket.it/profile.php?exteid=4&extobj=1198&subj=1&season=2027&obj=205854&action=view&eid=5",
+            "role": "AP",
+            "roster_points": 14,
+            "roster_ppg": 7.0,
+            "top": 9
+          },
+          {
+            "age": 22,
+            "birth_year": 2004,
+            "box_source": null,
+            "games": null,
+            "log": [],
+            "name": "Bouchlas Denis",
+            "player_id": "pb_157324",
+            "points": null,
+            "ppg": null,
+            "profile_url": "https://www.playbasket.it/profile.php?exteid=4&extobj=1198&subj=1&season=2027&obj=157324&mod=hs&action=view&eid=5",
+            "role": "AP",
+            "roster_points": null,
+            "roster_ppg": null,
+            "top": null
+          },
+          {
+            "age": null,
+            "birth_year": null,
+            "box_source": null,
+            "games": 1,
+            "log": [
+              {
+                "date": "2026-10-30",
+                "home": false,
+                "opponent": "US Goriziana",
+                "points": 4,
+                "result": "W",
+                "score": "58-80"
+              }
+            ],
+            "name": "Crocamo Maximilian",
+            "player_id": "pb_231369",
+            "points": 4,
+            "ppg": 4.0,
+            "profile_url": "https://www.playbasket.it/profile.php?exteid=4&extobj=1198&subj=1&season=2027&obj=231369&action=view&eid=5",
+            "role": null,
+            "roster_points": 4,
+            "roster_ppg": 4.0,
+            "top": 4
+          },
+          {
+            "age": null,
+            "birth_year": null,
+            "box_source": null,
+            "games": 2,
+            "log": [
+              {
+                "date": "2026-10-30",
+                "home": false,
+                "opponent": "US Goriziana",
+                "points": 8,
+                "result": "W",
+                "score": "58-80"
+              },
+              {
+                "date": "2026-11-06",
+                "home": true,
+                "opponent": "Cus Trieste",
+                "points": 2,
+                "result": "W",
+                "score": "66-55"
+              }
+            ],
+            "name": "Deiuri Paolo",
+            "player_id": "pb_188802",
+            "points": 10,
+            "ppg": 5.0,
+            "profile_url": "https://www.playbasket.it/profile.php?exteid=4&extobj=1198&subj=1&season=2027&obj=188802&action=view&eid=5",
+            "role": null,
+            "roster_points": 10,
+            "roster_ppg": 5.0,
+            "top": 8
+          },
+          {
+            "age": 20,
+            "birth_year": 2006,
+            "box_source": null,
+            "games": 1,
+            "log": [
+              {
+                "date": "2026-10-30",
+                "home": false,
+                "opponent": "US Goriziana",
+                "points": 1,
+                "result": "W",
+                "score": "58-80"
+              }
+            ],
+            "name": "Miniussi Marco",
+            "player_id": "pb_166334",
+            "points": 1,
+            "ppg": 1.0,
+            "profile_url": "https://www.playbasket.it/profile.php?exteid=4&extobj=1198&subj=1&season=2027&obj=166334&action=view&eid=5",
+            "role": "AP",
+            "roster_points": 1,
+            "roster_ppg": 1.0,
+            "top": 1
+          },
+          {
+            "age": null,
+            "birth_year": null,
+            "box_source": null,
+            "games": 2,
+            "log": [
+              {
+                "date": "2026-10-30",
+                "home": false,
+                "opponent": "US Goriziana",
+                "points": 4,
+                "result": "W",
+                "score": "58-80"
+              },
+              {
+                "date": "2026-11-06",
+                "home": true,
+                "opponent": "Cus Trieste",
+                "points": 2,
+                "result": "W",
+                "score": "66-55"
+              }
+            ],
+            "name": "Mura Riccardo",
+            "player_id": "pb_181828",
+            "points": 6,
+            "ppg": 3.0,
+            "profile_url": "https://www.playbasket.it/profile.php?exteid=4&extobj=1198&subj=1&season=2027&obj=181828&action=view&eid=5",
+            "role": null,
+            "roster_points": 6,
+            "roster_ppg": 3.0,
+            "top": 4
+          },
+          {
+            "age": 34,
+            "birth_year": 1992,
+            "box_source": null,
+            "games": 2,
+            "log": [
+              {
+                "date": "2026-10-30",
+                "home": false,
+                "opponent": "US Goriziana",
+                "points": 29,
+                "result": "W",
+                "score": "58-80"
+              },
+              {
+                "date": "2026-11-06",
+                "home": true,
+                "opponent": "Cus Trieste",
+                "points": 19,
+                "result": "W",
+                "score": "66-55"
+              }
+            ],
+            "name": "Pesci Alex",
+            "player_id": "pb_96205",
+            "points": 48,
+            "ppg": 24.0,
+            "profile_url": "https://www.playbasket.it/profile.php?exteid=4&extobj=1198&subj=1&season=2027&obj=96205&action=view&eid=5",
+            "role": "AF",
+            "roster_points": 48,
+            "roster_ppg": 24.0,
+            "top": 29
+          },
+          {
+            "age": 23,
+            "birth_year": 2003,
+            "box_source": null,
+            "games": null,
+            "log": [],
+            "name": "Petriccione Mattia",
+            "player_id": "pb_166994",
+            "points": null,
+            "ppg": null,
+            "profile_url": "https://www.playbasket.it/profile.php?exteid=4&extobj=1198&subj=1&season=2027&obj=166994&mod=hs&action=view&eid=5",
+            "role": "G",
+            "roster_points": null,
+            "roster_ppg": null,
+            "top": null
+          },
+          {
+            "age": 43,
+            "birth_year": 1983,
+            "box_source": null,
+            "games": 2,
+            "log": [
+              {
+                "date": "2026-10-30",
+                "home": false,
+                "opponent": "US Goriziana",
+                "points": 9,
+                "result": "W",
+                "score": "58-80"
+              },
+              {
+                "date": "2026-11-06",
+                "home": true,
+                "opponent": "Cus Trieste",
+                "points": 2,
+                "result": "W",
+                "score": "66-55"
+              }
+            ],
+            "name": "Pieri Gabriele",
+            "player_id": "pb_16034",
+            "points": 11,
+            "ppg": 5.5,
+            "profile_url": "https://www.playbasket.it/profile.php?exteid=4&extobj=1198&subj=1&season=2027&obj=16034&action=view&eid=5",
+            "role": "C",
+            "roster_points": 11,
+            "roster_ppg": 5.5,
+            "top": 9
+          },
+          {
+            "age": null,
+            "birth_year": null,
+            "box_source": null,
+            "games": 2,
+            "log": [
+              {
+                "date": "2026-10-30",
+                "home": false,
+                "opponent": "US Goriziana",
+                "points": 1,
+                "result": "W",
+                "score": "58-80"
+              },
+              {
+                "date": "2026-11-06",
+                "home": true,
+                "opponent": "Cus Trieste",
+                "points": 0,
+                "result": "W",
+                "score": "66-55"
+              }
+            ],
+            "name": "Pirro' Matteo",
+            "player_id": "pb_205927",
+            "points": 1,
+            "ppg": 0.5,
+            "profile_url": "https://www.playbasket.it/profile.php?exteid=4&extobj=1198&subj=1&season=2027&obj=205927&action=view&eid=5",
+            "role": null,
+            "roster_points": 1,
+            "roster_ppg": 0.5,
+            "top": 1
+          },
+          {
+            "age": null,
+            "birth_year": null,
+            "box_source": null,
+            "games": 1,
+            "log": [
+              {
+                "date": "2026-11-06",
+                "home": true,
+                "opponent": "Cus Trieste",
+                "points": 4,
+                "result": "W",
+                "score": "66-55"
+              }
+            ],
+            "name": "Troiano Nicola",
+            "player_id": "pb_188712",
+            "points": 4,
+            "ppg": 4.0,
+            "profile_url": "https://www.playbasket.it/profile.php?exteid=4&extobj=1198&subj=1&season=2027&obj=188712&action=view&eid=5",
+            "role": null,
+            "roster_points": 4,
+            "roster_ppg": 4.0,
+            "top": 4
+          },
+          {
+            "age": 31,
+            "birth_year": 1995,
+            "box_source": null,
+            "games": 2,
+            "log": [
+              {
+                "date": "2026-10-30",
+                "home": false,
+                "opponent": "US Goriziana",
+                "points": 5,
+                "result": "W",
+                "score": "58-80"
+              },
+              {
+                "date": "2026-11-06",
+                "home": true,
+                "opponent": "Cus Trieste",
+                "points": 8,
+                "result": "W",
+                "score": "66-55"
+              }
+            ],
+            "name": "Vecchiet Gabriele",
+            "player_id": "pb_96201",
+            "points": 13,
+            "ppg": 6.5,
+            "profile_url": "https://www.playbasket.it/profile.php?exteid=4&extobj=1198&subj=1&season=2027&obj=96201&action=view&eid=5",
+            "role": "PM",
+            "roster_points": 13,
+            "roster_ppg": 6.5,
+            "top": 8
+          },
+          {
+            "age": 35,
+            "birth_year": 1991,
+            "box_source": null,
+            "games": 1,
+            "log": [
+              {
+                "date": "2026-11-06",
+                "home": true,
+                "opponent": "Cus Trieste",
+                "points": 12,
+                "result": "W",
+                "score": "66-55"
+              }
+            ],
+            "name": "Zorzet Giulio",
+            "player_id": "pb_120415",
+            "points": 12,
+            "ppg": 12.0,
+            "profile_url": "https://www.playbasket.it/profile.php?exteid=4&extobj=1198&subj=1&season=2027&obj=120415&action=view&eid=5",
+            "role": "G",
+            "roster_points": 12,
+            "roster_ppg": 12.0,
+            "top": 12
+          }
+        ],
         "season_id": "2026_27",
         "source": "PLAYBASKET",
-        "source_url": "https://www.playbasket.it/friuli/league.php?lt=2&lf=M&lr=FR&lc=PM&season=2027&mod=tm&lg=1",
-        "status": "no_data",
+        "source_url": "https://www.playbasket.it/club.php?lt=2&lf=M&lr=FR&lp=TS&lc=DR2&season=2027&mod=rs&obj=1198&action=view&eid=4",
+        "status": "ok",
         "team_id": "isonzoDR2"
       },
       "trieste": {
@@ -15864,10 +16320,10 @@
     "new_matches": 1,
     "pages_completed": 181,
     "pages_requested": 181,
-    "players_games": 420,
-    "players_roster": 86,
+    "players_games": 443,
+    "players_roster": 102,
     "players_teams": 10,
-    "players_with_data": 6,
+    "players_with_data": 7,
     "total_matches": 277,
     "updated_matches": 214
   },

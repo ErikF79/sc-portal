@@ -81,13 +81,13 @@
     },
     {
       "competition_id": "fvg_pm_2026_27_gots", "season_id": "2026_27", "provider": "FIP", "enabled": true,
-      "name": "Promozione Maschile (GO/TS)",
+      "name": "Divisione Regionale 2 (GO/TS)",
       "base_url": "https://fip.it/risultati/",
       "configuration": {"group":"campionati-regionali","regione_codice":"FR","comitato_codice":"RFR","sesso":"M","codice_campionato":"PM","codice_fase":"1","codice_girone":"85535"},
       "scan": {"mode":"CONFIGURED_FALLBACK","andata_code":"1","ritorno_code":"0","configured_rounds":{"andata":11,"ritorno":11}},
       "players": {
         "provider": "PLAYBASKET",
-        "league_url": "https://www.playbasket.it/friuli/league.php?lt=2&lf=M&lr=FR&lc=PM&season=2027&mod=tm&lg=1",
+        "league_url": "https://www.playbasket.it/friuli/league.php?lt=2&lf=M&lr=FR&lc=DR2&season=2027&mod=tm&lg=1",
         "team_match": {"isonzoDR2": ["isonzo"]}
       },
       "tracked_teams": [

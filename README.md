@@ -2,7 +2,7 @@
 
 PWA (Progressive Web App) per il **Sport Center**: calendari delle squadre, agenda, planner settimanale, analisi delle classifiche, **statistiche giocatori** e **schede squadra** con sito ufficiale e grafici.
 
-- **Versione:** 0.8.2
+- **Versione:** 0.8.3
 - **Dati:** tutti derivati da `data_engine/output/sc_portal_data.json` (nessun dato simulato: dove mancano i risultati si mostra `—` / "nessun risultato")
 - **Squadre:** FIP (basket, calendari + risultati), PlayBasket (rose, medie e game log), Lega Basket (box completo Serie A), Lega Serie A (calcio), gare personali
 
@@ -40,9 +40,10 @@ py data_engine/sc_data_engine.py --players-only
 
 ## Statistiche giocatori
 
-- Fonte rose/medie/game log: **PlayBasket** (tab "Giocatori" nella PWA).
+- Fonte rose/medie/game log: **PlayBasket** (tab "Giocatori" nella PWA). Oltre ai punti vengono lette, quando pubblicate, le colonne del game log `TL/T2/T3/RD/RO/FF/FS/PR/PP/Ass/St/Min` (tiri, rimbalzi, falli, palle, assist, stoppate, minuti); il campo `rebounds` è la somma di rimbalzi offensivi e difensivi. Se la fonte lascia le colonne a `-`, l'app mostra solo i punti.
 - Box completo (minuti, rimbalzi, assist, falli, valutazione…) solo per la **Serie A**: le gare vengono ricostruite dalla Lega Basket seguendo i `prev_matches` a partire dalle gare correnti del sitemap; le partite non ancora giocate non producono righe di box.
-- Le competizioni non ancora pubblicate dalla fonte mostrano onestamente "dati non disponibili" (nessun dato inventato).
+- **Divisione Regionale 2** (ex Promozione): su PlayBasket il codice corretto è `lc=DR2` (girone Gorizia/Trieste), non più `lc=PM`.
+- Le competizioni non ancora pubblicate dalla fonte mostrano onestamente "dati non disponibili" (nessun dato inventato). Al 10/11/2026 la pagina **Under 19 Silver FVG** (`lc=U19S`) esiste ma è vuota (nessuna squadra/partita pubblicata): i dati restano `no_data` finché PlayBasket non li pubblica.
 
 ## Schede squadra
 
@@ -54,7 +55,7 @@ py data_engine/sc_data_engine.py --players-only
 
 - Nella vista **Agenda** il click su una gara già disputata (punteggio presente) apre la finestra **Dettaglio gara**: intestazione con squadre e punteggio, data/ora, campo, competizione e stato.
 - Link diretti alla **fonte** della gara (FIP / PlayBasket / Lega Serie A) e al **sito ufficiale** della squadra (dove verificato).
-- Per il basket con box disponibile (Serie A/A2) viene ricostruito il **tabellino giocatori** di quella gara (minuti, punti, rimbalzi, assist, tiri, valutazione…) filtrando i log individuali; dove la fonte non lo pubblica il dato non viene simulato.
+- Per il basket con box disponibile (Serie A via Lega Basket; competizioni PlayBasket quando il game log pubblica le colonne statistiche) viene ricostruito il **tabellino giocatori** di quella gara (minuti, punti, rimbalzi, assist, tiri, falli, valutazione…), filtrando i log individuali; dove la fonte non lo pubblica il dato non viene simulato.
 
 ## Struttura
 

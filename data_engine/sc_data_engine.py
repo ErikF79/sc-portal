@@ -729,6 +729,21 @@ def build_team_logos(config: dict, matches: list[dict]) -> dict[str, str]:
 PB_BASE = "https://www.playbasket.it/"
 LBA_GAMES_SITEMAP = "https://www.legabasket.it/games.xml"
 _PB_ROLES = ("guardia", "playmaker", "ala", "centro", "pivot")
+# Colonne statistiche PlayBasket -> chiavi canoniche usate dall'app.
+_PB_STAT_MAP = {
+    "Pts": "points", "Min": "minutes",
+    "TL": "ft", "T2": "fg", "T3": "three",
+    "TL%": "ft_pct", "T2%": "fg_pct", "T3%": "three_pct",
+    "RD": "def_rebounds", "RO": "off_rebounds",
+    "FF": "fouls", "FS": "fouls_drawn",
+    "PR": "steals", "PP": "turnovers",
+    "Ass": "assists", "St": "blocks",
+}
+# Colonne con valore numerico intero; tiri e percentuali restano testo.
+_PB_INT_KEYS = {
+    "points", "minutes", "def_rebounds", "off_rebounds", "fouls", "fouls_drawn",
+    "steals", "turnovers", "assists", "blocks",
+}
 
 
 def pb_abs(url: str) -> str:
@@ -873,11 +888,21 @@ def parse_pb_profile(html_src: str) -> dict:
             "points": _int(cells[2]) if len(cells) > 2 else None,
         }
         if headers and len(cells) == len(headers):
-            extra = {headers[i]: _text(cells[i]) for i in range(len(headers))
-                     if headers[i] and headers[i] not in ("Partita", "Pts") and i < len(cells)
-                     and _text(cells[i]) not in ("", "-")}
-            if extra:
-                row["stats"] = extra
+            stats: dict[str, Any] = {}
+            for i, label in enumerate(headers):
+                key = _PB_STAT_MAP.get(label)
+                if not key:
+                    continue
+                raw = _text(cells[i])
+                if raw in ("", "-", "\u2013"):
+                    continue
+                stats[key] = _int(raw) if key in _PB_INT_KEYS else raw
+            if "points" in stats:
+                row["points"] = stats.pop("points")
+            off, de = stats.get("off_rebounds"), stats.get("def_rebounds")
+            if isinstance(off, int) or isinstance(de, int):
+                stats["rebounds"] = (off if isinstance(off, int) else 0) + (de if isinstance(de, int) else 0)
+            row.update(stats)
         info["log"].append(row)
     info["log"].sort(key=lambda r: r["date"])
     return info
