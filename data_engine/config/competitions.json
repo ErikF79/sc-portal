@@ -30,6 +30,11 @@
         "league_url": "https://www.playbasket.it/league.php?lt=1&lf=M&lr=LA&lp=RM&lc=L2&season=2027&mod=tm&lg=1",
         "team_match": {"cividale": ["cividale"]}
       },
+      "enrichment": {
+        "provider": "LNP",
+        "crawl_delay_seconds": 10,
+        "teams": {"cividale": {"team_url": "https://www.legapallacanestro.com/squadra/wp/1501072"}}
+      },
       "tracked_teams": [
         {"team_id":"cividale","canonical_name":"Gesteco Cividale","aliases":["GESTECO CIVIDALE","CIVIDALE"]}
       ]

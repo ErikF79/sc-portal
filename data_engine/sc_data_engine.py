@@ -1318,14 +1318,350 @@ def _enrich_with_lba(comp_id: str, entry: dict, lcfg: dict, policy: dict, errors
     entry["roster"].sort(key=lambda p: (p.get("name") or "").casefold())
 
 
+# --------------------------------------------------------------------------- #
+# Tabellini ufficiali LNP (Serie A2)
+# --------------------------------------------------------------------------- #
+LNP_BASE = "https://www.legapallacanestro.com"
 
-def collect_players(config: dict, policy: dict, errors: list[dict], only: Optional[str] = None) -> dict:
+
+def _lnp_soup(html_src: str) -> Any:
+    """DOM della pagina LNP; None se BeautifulSoup non e' installato."""
+    if BeautifulSoup is None:
+        return None
+    try:
+        return BeautifulSoup(html_src, "lxml")
+    except Exception:  # noqa: BLE001 - lxml non disponibile: parser standard
+        return BeautifulSoup(html_src, "html.parser")
+
+
+def parse_lnp_team_matches(html_src: str, base_url: str = LNP_BASE) -> list[str]:
+    """Link alle schede gara elencate nella pagina squadra LNP."""
+    out: list[str] = []
+    for m in re.finditer(r"""href=["'](/wp/match/[^"']+)["']""", html_src or "", flags=re.I):
+        url = urlparse.urljoin(base_url, _html.unescape(m.group(1)))
+        if url not in out:
+            out.append(url)
+    return out
+
+
+def parse_lnp_match(html_src: str, url: str) -> Optional[dict]:
+    """Tabellino ufficiale LNP: data, squadre, punteggio e righe di box.
+
+    La scheda gara pubblica due blocchi (casa/ospite); ognuno contiene la
+    tabella roster e quella delle statistiche. Le colonne sono quelle del
+    referto LNP: Pun Min Falli C/S, T2, T3, TL, Rimbalzi O/D/T, Stop D/S,
+    Palle P/R, Ass, Lega (valutazione), OER.
+    """
+    soup = _lnp_soup(html_src)
+    if soup is None:
+        return None
+    h1 = soup.find("h1")
+    title = _text(h1) if h1 else ""
+    home = away = None
+    title_hit = re.match(r"(.+?)\s+VS\s+(.+)", title, flags=re.I)
+    if title_hit:
+        home, away = title_hit.group(1).strip(), title_hit.group(2).strip()
+    flat = soup.get_text(" ", strip=True)
+    hit = re.search(r"Data:\s*(\d{2})/(\d{2})/(\d{4})", flat)
+    date = f"{hit.group(3)}-{hit.group(2)}-{hit.group(1)}" if hit else None
+    result = soup.select_one(".match-result")
+    score = re.match(r"(\d{1,3})\s*[\u2014\u2013-]\s*(\d{1,3})", _text(result) if result else "")
+    home_score = int(score.group(1)) if score else None
+    away_score = int(score.group(2)) if score else None
+
+    def cells(row: Any) -> list[str]:
+        return [_text(c) for c in row.find_all(["th", "td"])]
+
+    def num(row: list[str], i: int) -> Optional[int]:
+        return _int(row[i]) if i < len(row) else None
+
+    def ratio(row: list[str], made: int, attempted: int) -> Optional[str]:
+        if attempted >= len(row) or row[attempted] in ("", "-", "\u2013"):
+            return None
+        return f"{row[made]}/{row[attempted]}"
+
+    teams: list[dict] = []
+    box = soup.select_one(".boxscore-content")
+    current: Optional[dict] = None
+    if box:
+        for el in box.find_all(["h3", "table"]):
+            if el.name == "h3":
+                current = {"name": _text(el), "rows": []}
+                teams.append(current)
+                continue
+            if current is None or el.find("table") is not None:
+                continue  # tabella contenitore: le righe utili sono nelle tabelle figlie
+            rows = el.find_all("tr")
+            if not rows:
+                continue
+            heads = [cells(r) for r in rows[:3]]
+            if any("Num" in h and "Player" in h for h in heads):
+                roster = []
+                for r in rows[2:]:
+                    c = cells(r)
+                    if len(c) >= 3 and c[0].isdigit():
+                        roster.append({"number": c[0], "starter": c[1] == "*", "name": c[2]})
+                current["roster"] = roster
+            elif any("Pun" in h and "Min" in h for h in heads):
+                start = next(i for i, h in enumerate(heads) if "Pun" in h and "Min" in h) + 1
+                current["stats"] = [cells(r) for r in rows[start:]]
+
+        for team in teams:
+            for player, row in zip(team.pop("roster", []), team.pop("stats", [])):
+                item: dict[str, Any] = {
+                    "name": player["name"],
+                    "number": player["number"],
+                    "starter": player["starter"],
+                    "minutes": num(row, 1),
+                    "points": num(row, 0),
+                    "fouls": num(row, 2),
+                    "fouls_drawn": num(row, 3),
+                    "fg": ratio(row, 4, 5),
+                    "three": ratio(row, 7, 8),
+                    "ft": ratio(row, 10, 11),
+                    "off_rebounds": num(row, 13),
+                    "def_rebounds": num(row, 14),
+                    "rebounds": num(row, 15),
+                    "blocks": num(row, 16),
+                    "blocks_against": num(row, 17),
+                    "turnovers": num(row, 18),
+                    "steals": num(row, 19),
+                    "assists": num(row, 20),
+                    "value": num(row, 21),
+                    "oer": row[22] if len(row) > 22 else None,
+                }
+                team["rows"].append(item)
+
+    return {
+        "url": url,
+        "date": date,
+        "home": home,
+        "away": away,
+        "home_score": home_score,
+        "away_score": away_score,
+        "teams": teams,
+    }
+
+
+def _team_keys_match(a: Any, b: Any) -> bool:
+    """Due nomi di squadra indicano lo stesso club (sponsor incluso)."""
+    ka, kb = _lba_keys(a), _lba_keys(b)
+    return bool(ka and kb) and (ka <= kb or kb <= ka or len(ka & kb) >= 2)
+
+
+def _enrich_with_lnp(comp_id: str, entry: dict, ecfg: dict, policy: dict,
+                    errors: list[dict], score_updates: Optional[list[dict]] = None) -> None:
+    """Fonde il tabellino ufficiale LNP nei game log dei giocatori.
+
+    La pagina squadra elenca le schede gara della stagione; ogni scheda espone
+    il box completo. Le righe vengono accostate ai giocatori della rosa e ai
+    log gia' presenti per data. I punteggi FIP/PlayBasket non vengono
+    sovrascritti: al massimo si completa un valore mancante.
+    """
+    team_cfg = (ecfg.get("teams") or {}).get(entry.get("team_id")) or {}
+    team_url = team_cfg.get("team_url")
+    if not team_url or not entry.get("roster"):
+        return
+    if BeautifulSoup is None:
+        errors.append({"competition_id": comp_id, "phase": "players_lnp", "url": team_url,
+                       "message": "beautifulsoup4 non disponibile: tabellini LNP non acquisiti"})
+        return
+
+    delay = max(float(policy.get("delay_seconds", 0.5)),
+                float(ecfg.get("crawl_delay_seconds", 10) or 0))
+    retries = int(policy.get("max_retries", 1)) + 1
+    try:
+        page, transport = fetch(team_url, retries=retries)
+    except Exception as exc:  # noqa: BLE001
+        errors.append({"competition_id": comp_id, "phase": "players_lnp", "url": team_url, "message": str(exc)})
+        return
+    save_snapshot(comp_id, "lnp_team_calendar", page, team_url, transport)
+    time.sleep(delay)
+
+    urls = parse_lnp_team_matches(page, team_url)
+    if not urls:
+        errors.append({"competition_id": comp_id, "phase": "players_lnp", "url": team_url,
+                       "message": "nessuna scheda gara pubblicata nella pagina squadra LNP"})
+        return
+
+    club_keys = _lba_keys(entry.get("club_name") or "")
+    boxes: list[dict] = []
+    for url in urls:
+        try:
+            raw, _ = fetch(url, retries=retries)
+        except Exception as exc:  # noqa: BLE001
+            errors.append({"competition_id": comp_id, "phase": "players_lnp", "url": url, "message": str(exc)})
+            continue
+        time.sleep(delay)
+        game = parse_lnp_match(raw, url)
+        if not game or not game.get("date"):
+            continue
+        match_id = (re.search(r"/wp/match/([^/]+)", url) or [None, "gara"])[1]
+        save_snapshot(comp_id, f"lnp_match_{match_id}", raw, url, transport)
+        side = None
+        if club_keys:
+            if club_keys <= _lba_keys(game.get("home")):
+                side = "home"
+            elif club_keys <= _lba_keys(game.get("away")):
+                side = "away"
+        if side is None:
+            continue
+        block = next((t for t in game["teams"] if _team_keys_match(t["name"], game[side])), None)
+        if block is None or not block["rows"]:
+            continue
+        opponent = game["away"] if side == "home" else game["home"]
+        score = None
+        result = None
+        if game.get("home_score") is not None and game.get("away_score") is not None:
+            score = f'{game["home_score"]}-{game["away_score"]}'
+            ours, theirs = ((game["home_score"], game["away_score"]) if side == "home"
+                            else (game["away_score"], game["home_score"]))
+            result = "W" if ours > theirs else ("L" if ours < theirs else "D")
+        if score_updates is not None and score:
+            score_updates.append({"date": game["date"], "home": game["home"], "away": game["away"],
+                                  "home_score": game["home_score"], "away_score": game["away_score"],
+                                  "source": "LNP", "url": url})
+        for row in block["rows"]:
+            box_row = dict(row)
+            box_row.update({"date": game["date"], "opponent": opponent, "home": side == "home",
+                            "score": score, "result": result, "source_url": url})
+            boxes.append(box_row)
+
+    if not boxes:
+        return
+    entry["box_source"] = "LNP"
+    entry["box_source_url"] = team_url
+    by_player: dict[str, list[dict]] = {}
+    for row in boxes:
+        by_player.setdefault(norm_name(row.get("name")), []).append(row)
+
+    claimed: set[str] = set()
+
+    def _match(player_key: str) -> Optional[str]:
+        keys = _lba_keys(player_key)
+        if not keys:
+            return None
+        best, best_score = None, 0
+        for item in entry["roster"]:
+            roster_key = norm_name(item.get("name"))
+            if not roster_key or roster_key in claimed:
+                continue
+            common = keys & _lba_keys(item.get("name"))
+            if not common or not (keys <= _lba_keys(item.get("name")) or len(common) >= 2):
+                continue
+            if len(common) > best_score:
+                best, best_score = roster_key, len(common)
+        if best:
+            claimed.add(best)
+        return best
+
+    leftovers: dict[str, list[dict]] = {}
+    for player_key, rows in by_player.items():
+        leftovers.setdefault(_match(player_key) or player_key, []).extend(rows)
+
+    for item in entry["roster"]:
+        rows = leftovers.pop(norm_name(item.get("name")), None)
+        if not rows:
+            continue
+        item["box_source"] = "LNP"
+        known = {r["date"] for r in item["log"]}
+        by_date: dict[str, dict] = {}
+        for row in rows:
+            by_date.setdefault(row["date"], row)
+        for log_row in item["log"]:
+            box_row = by_date.get(log_row["date"])
+            if not box_row:
+                continue
+            for key, value in box_row.items():
+                if key in ("date", "opponent", "home", "score", "result", "name", "number", "starter",
+                           "source_url") or value is None:
+                    continue
+                log_row[key] = value
+            if not log_row.get("score") and box_row.get("score"):
+                log_row["score"] = box_row["score"]
+            if not log_row.get("result") and box_row.get("result"):
+                log_row["result"] = box_row["result"]
+        for date_key in sorted(by_date):
+            if date_key in known:
+                continue
+            box_row = by_date[date_key]
+            if not box_row.get("minutes"):
+                continue  # non sceso in campo: nessuna gara da aggiungere
+            extra = {k: v for k, v in box_row.items()
+                     if k not in ("date", "opponent", "home", "score", "result", "name", "number",
+                                  "starter", "source_url") and v is not None}
+            item["log"].append({
+                "date": date_key, "opponent": box_row["opponent"], "home": box_row["home"],
+                "result": box_row.get("result"), "score": box_row.get("score"),
+                "points": box_row.get("points"), **extra,
+            })
+        item["log"].sort(key=lambda r: r["date"])
+        _aggregate(item)
+
+    # giocatori presenti solo nel tabellino LNP (non censiti nella rosa PlayBasket)
+    for player_key, rows in leftovers.items():
+        if not player_key or not rows:
+            continue
+        by_date = {}
+        for row in rows:
+            by_date.setdefault(row["date"], row)
+        item = {
+            "player_id": "lnp_" + obs_id("LNP", comp_id, player_key),
+            "name": rows[0].get("name"),
+            "role": None, "birth_year": None, "age": None,
+            "roster_points": None, "roster_ppg": None, "profile_url": None,
+            "box_source": "LNP",
+            "log": [
+                {
+                    "date": date_key, "opponent": by_date[date_key]["opponent"],
+                    "home": by_date[date_key]["home"], "result": by_date[date_key].get("result"),
+                    "score": by_date[date_key].get("score"),
+                    "points": by_date[date_key].get("points"),
+                    **{k: v for k, v in by_date[date_key].items()
+                       if k not in ("date", "opponent", "home", "score", "result", "name", "number",
+                                    "starter", "source_url") and v is not None},
+                }
+                for date_key in sorted(by_date) if by_date[date_key].get("minutes")
+            ],
+        }
+        if not item["log"]:
+            continue
+        _aggregate(item)
+        entry["roster"].append(item)
+    entry["roster"].sort(key=lambda p: (p.get("name") or "").casefold())
+
+
+def apply_lnp_scores(matches: list[dict], updates: list[dict]) -> None:
+    """Completa i punteggi mancanti con il risultato ufficiale LNP.
+
+    Le gare gia' concluse con punteggio FIP non vengono toccate; si interviene
+    solo quando la fonte primaria non ha ancora pubblicato il risultato.
+    """
+    for upd in updates or []:
+        for match in matches:
+            if match.get("date") != upd.get("date"):
+                continue
+            if match.get("home_score") is not None and match.get("away_score") is not None:
+                continue
+            if not (_team_keys_match(upd.get("home"), match.get("home"))
+                    and _team_keys_match(upd.get("away"), match.get("away"))):
+                continue
+            match["home_score"] = upd["home_score"]
+            match["away_score"] = upd["away_score"]
+            match["score_source"] = upd.get("source", "LNP")
+            match["score_source_url"] = upd.get("url")
+            break
+
+
+def collect_players(config: dict, policy: dict, errors: list[dict], only: Optional[str] = None,
+                    score_updates: Optional[list[dict]] = None) -> dict:
     """Acquisisce rosa e statistiche per ogni squadra seguita.
 
     Flusso: pagina squadre (mod=tm) -> rosa del club -> scheda giocatore
     (mod=st, game log). Per l'A1 il game log e' arricchito con il box completo
-    della Lega Basket. Le competizioni non ancora pubblicate su PlayBasket
-    restituiscono status 'no_data' (nessun dato inventato).
+    della Lega Basket, per l'A2 con il tabellino ufficiale LNP. Le competizioni
+    non ancora pubblicate su PlayBasket restituiscono status 'no_data' (nessun
+    dato inventato).
     """
     delay = float(policy.get("delay_seconds", 0.5))
     retries = int(policy.get("max_retries", 1)) + 1
@@ -1443,6 +1779,10 @@ def collect_players(config: dict, policy: dict, errors: list[dict], only: Option
             if pcfg.get("lba"):
                 _enrich_with_lba(comp_id, entry, pcfg["lba"], policy, errors)
                 time.sleep(delay)
+            ecfg = comp.get("enrichment") or {}
+            if ecfg.get("provider") == "LNP":
+                _enrich_with_lnp(comp_id, entry, ecfg, policy, errors, score_updates)
+                time.sleep(delay)
     return payload
 
 
@@ -1539,12 +1879,14 @@ def players_summary(players: dict) -> dict:
 def run_players_only(config: dict, policy: dict, only: Optional[str] = None) -> dict:
     """Solo statistiche giocatori: aggiorna l'output esistente senza ri-scansionare."""
     errors: list[dict] = []
-    players = collect_players(config, policy, errors, only=only)
+    score_updates: list[dict] = []
+    players = collect_players(config, policy, errors, only=only, score_updates=score_updates)
     out_path = OUT / "sc_portal_data.json"
     data = read_json(out_path, None)
     if data is None:
         raise RuntimeError("output sc_portal_data.json assente: eseguire prima la scansione completa")
     data["players"] = players
+    apply_lnp_scores(data.get("matches") or [], score_updates)
     summary = data.setdefault("sync_summary", {})
     summary.update(players_summary(players))
     kept = [e for e in (data.get("errors") or []) if e.get("phase") not in ("players", "players_lba")]
@@ -1627,7 +1969,10 @@ def run(config_path: Path, only: Optional[str], limit: Optional[int], parser: st
 
     standings = build_standings(config, results_by_comp, errors)
     team_logos = build_team_logos(config, matches)
-    players = {} if skip_players else collect_players(config, policy, errors, only=only)
+    score_updates: list[dict] = []
+    players = {} if skip_players else collect_players(config, policy, errors, only=only,
+                                                      score_updates=score_updates)
+    apply_lnp_scores(matches, score_updates)
 
     summary = {
         "competitions": len(reports),

@@ -81,6 +81,11 @@ jobs:
           except Exception as e:
               print("cannot read output:", e); raise SystemExit(0)
           print("summary:", json.dumps(d.get("sync_summary"), ensure_ascii=False))
+          lnp = [t for t in ((d.get("players") or {}).get("teams") or {}).values()
+                 if t.get("box_source") == "LNP"]
+          print("LNP enriched:", [(t.get("team_id"), len(t.get("roster") or []),
+                                   sum(len(p.get("log") or []) for p in t.get("roster") or []))
+                                  for t in lnp])
           for err in (d.get("errors") or [])[:8]:
               print("ERR:", json.dumps(err, ensure_ascii=False))
           PY
@@ -88,6 +93,7 @@ jobs:
           curl -sS -o /dev/null -w "fip.it -> %{http_code}\n" "https://fip.it/risultati/" || true
           curl -sS -o /dev/null -w "playbasket -> %{http_code}\n" "https://www.playbasket.it/" || true
           curl -sS -o /dev/null -w "api-sdp -> %{http_code}\n" "https://api-sdp.legaseriea.it/" || true
+          curl -sS -o /dev/null -w "lnp -> %{http_code}\n" "https://www.legapallacanestro.com/squadra/wp/1501072" || true
           curl -sS -o /dev/null -w "carpediem-baskin -> %{http_code}\n" "https://erikf79.github.io/carpediem-baskin/data.json" || true
 
       - name: Safety check (do not publish degraded data)
