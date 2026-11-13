@@ -1531,6 +1531,7 @@ def _enrich_with_lnp(comp_id: str, entry: dict, ecfg: dict, policy: dict,
         return
     entry["box_source"] = "LNP"
     entry["box_source_url"] = team_url
+    official_dates = {row["date"] for row in boxes}
     by_player: dict[str, list[dict]] = {}
     for row in boxes:
         by_player.setdefault(norm_name(row.get("name")), []).append(row)
@@ -1561,13 +1562,20 @@ def _enrich_with_lnp(comp_id: str, entry: dict, ecfg: dict, policy: dict,
 
     for item in entry["roster"]:
         rows = leftovers.pop(norm_name(item.get("name")), None)
+        by_date: dict[str, dict] = {}
+        for row in rows or []:
+            by_date.setdefault(row["date"], row)
+        # Le gare coperte dal tabellino ufficiale sono autoritative: chi non
+        # compare nel box non e' sceso in campo. Elimina quindi le righe
+        # parziali (spesso solo punti) inserite dagli utenti su PlayBasket.
+        kept = [r for r in item["log"] if r["date"] not in official_dates or r["date"] in by_date]
+        if len(kept) != len(item["log"]):
+            item["log"] = kept
+            _aggregate(item)
         if not rows:
             continue
         item["box_source"] = "LNP"
         known = {r["date"] for r in item["log"]}
-        by_date: dict[str, dict] = {}
-        for row in rows:
-            by_date.setdefault(row["date"], row)
         for log_row in item["log"]:
             box_row = by_date.get(log_row["date"])
             if not box_row:
@@ -1577,6 +1585,7 @@ def _enrich_with_lnp(comp_id: str, entry: dict, ecfg: dict, policy: dict,
                            "source_url") or value is None:
                     continue
                 log_row[key] = value
+            log_row["box_source"] = "LNP"
             if not log_row.get("score") and box_row.get("score"):
                 log_row["score"] = box_row["score"]
             if not log_row.get("result") and box_row.get("result"):
@@ -1593,7 +1602,7 @@ def _enrich_with_lnp(comp_id: str, entry: dict, ecfg: dict, policy: dict,
             item["log"].append({
                 "date": date_key, "opponent": box_row["opponent"], "home": box_row["home"],
                 "result": box_row.get("result"), "score": box_row.get("score"),
-                "points": box_row.get("points"), **extra,
+                "points": box_row.get("points"), "box_source": "LNP", **extra,
             })
         item["log"].sort(key=lambda r: r["date"])
         _aggregate(item)
@@ -1617,6 +1626,7 @@ def _enrich_with_lnp(comp_id: str, entry: dict, ecfg: dict, policy: dict,
                     "home": by_date[date_key]["home"], "result": by_date[date_key].get("result"),
                     "score": by_date[date_key].get("score"),
                     "points": by_date[date_key].get("points"),
+                    "box_source": "LNP",
                     **{k: v for k, v in by_date[date_key].items()
                        if k not in ("date", "opponent", "home", "score", "result", "name", "number",
                                     "starter", "source_url") and v is not None},

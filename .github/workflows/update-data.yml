@@ -93,7 +93,7 @@ jobs:
           curl -sS -o /dev/null -w "fip.it -> %{http_code}\n" "https://fip.it/risultati/" || true
           curl -sS -o /dev/null -w "playbasket -> %{http_code}\n" "https://www.playbasket.it/" || true
           curl -sS -o /dev/null -w "api-sdp -> %{http_code}\n" "https://api-sdp.legaseriea.it/" || true
-          curl -sS -o /dev/null -w "lnp -> %{http_code}\n" "https://www.legapallacanestro.com/squadra/wp/1501072" || true
+          curl -sS -o /dev/null -w "lnp -> %{http_code}\n" "https://www.legapallacanestro.com/serie-a2/ueb-gesteco-cividale" || true
           curl -sS -o /dev/null -w "carpediem-baskin -> %{http_code}\n" "https://erikf79.github.io/carpediem-baskin/data.json" || true
 
       - name: Safety check (do not publish degraded data)

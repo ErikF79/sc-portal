@@ -33,7 +33,7 @@
       "enrichment": {
         "provider": "LNP",
         "crawl_delay_seconds": 10,
-        "teams": {"cividale": {"team_url": "https://www.legapallacanestro.com/squadra/wp/1501072"}}
+        "teams": {"cividale": {"team_url": "https://www.legapallacanestro.com/serie-a2/ueb-gesteco-cividale"}}
       },
       "tracked_teams": [
         {"team_id":"cividale","canonical_name":"Gesteco Cividale","aliases":["GESTECO CIVIDALE","CIVIDALE"]}
