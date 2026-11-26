@@ -14,6 +14,7 @@ Ottimizzato rispetto alla 0.5B:
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import html as _html
 import json
@@ -1664,7 +1665,8 @@ def apply_lnp_scores(matches: list[dict], updates: list[dict]) -> None:
 
 
 def collect_players(config: dict, policy: dict, errors: list[dict], only: Optional[str] = None,
-                    score_updates: Optional[list[dict]] = None) -> dict:
+                    score_updates: Optional[list[dict]] = None,
+                    previous: Optional[dict] = None) -> dict:
     """Acquisisce rosa e statistiche per ogni squadra seguita.
 
     Flusso: pagina squadre (mod=tm) -> rosa del club -> scheda giocatore
@@ -1672,6 +1674,10 @@ def collect_players(config: dict, policy: dict, errors: list[dict], only: Option
     della Lega Basket, per l'A2 con il tabellino ufficiale LNP. Le competizioni
     non ancora pubblicate su PlayBasket restituiscono status 'no_data' (nessun
     dato inventato).
+
+    ``previous`` sono le squadre dell'ultimo output pubblicato: se una fonte
+    non risponde (403, timeout, manutenzione) l'entry precedente viene
+    conservata e marcata ``stale`` invece di essere svuotata.
     """
     delay = float(policy.get("delay_seconds", 0.5))
     retries = int(policy.get("max_retries", 1)) + 1
@@ -1701,25 +1707,42 @@ def collect_players(config: dict, policy: dict, errors: list[dict], only: Option
                     "source": pcfg.get("provider", comp["provider"]),
                     "source_url": pcfg.get("source_url") or comp.get("source_page") or comp.get("url"),
                     "box_source": None,
-                    "generated_at": now(),
+                    "generated_at": None,
+                    "last_success": None,
+                    "checked_at": now(),
+                    "stale": False,
                     "roster": [],
                 }
             continue
         for t in tracked:
-            payload["teams"][t["team_id"]] = {
-                "team_id": t["team_id"],
-                "competition_id": comp_id,
-                "competition_name": comp.get("name", comp_id),
-                "season_id": comp.get("season_id"),
-                "club": t.get("canonical_name"),
-                "status": "no_data",
-                "reason": "acquisizione non eseguita",
-                "source": pcfg.get("provider", "PLAYBASKET"),
-                "source_url": pcfg.get("league_url"),
-                "box_source": None,
-                "generated_at": now(),
-                "roster": [],
-            }
+            prev = (previous or {}).get(t["team_id"]) or {}
+            if prev.get("roster"):
+                # Ultimo dato buono: resta in linea finche' un aggiornamento
+                # riuscito non lo sostituisce (fonte 403/timeout/manutenzione).
+                entry = copy.deepcopy(prev)
+                entry["stale"] = True
+                entry["checked_at"] = now()
+                if not entry.get("last_success"):
+                    entry["last_success"] = prev.get("generated_at")
+            else:
+                entry = {
+                    "team_id": t["team_id"],
+                    "competition_id": comp_id,
+                    "competition_name": comp.get("name", comp_id),
+                    "season_id": comp.get("season_id"),
+                    "club": t.get("canonical_name"),
+                    "status": "no_data",
+                    "reason": "acquisizione non eseguita",
+                    "source": pcfg.get("provider", "PLAYBASKET"),
+                    "source_url": pcfg.get("league_url"),
+                    "box_source": None,
+                    "generated_at": None,
+                    "last_success": None,
+                    "checked_at": now(),
+                    "stale": False,
+                    "roster": [],
+                }
+            payload["teams"][t["team_id"]] = entry
         league_url = pcfg.get("league_url")
         if not league_url:
             continue
@@ -1731,7 +1754,13 @@ def collect_players(config: dict, policy: dict, errors: list[dict], only: Option
             errors.append({"competition_id": comp_id, "phase": "players", "url": league_url, "message": str(exc)})
             log.error("Elenco squadre %s fallito: %s", comp_id, exc)
             for t in tracked:
-                payload["teams"][t["team_id"]]["reason"] = f"fonte non raggiungibile ({exc})"
+                entry = payload["teams"][t["team_id"]]
+                if entry.get("roster"):
+                    entry["status"] = "ok"
+                    entry["stale"] = True
+                    entry["reason"] = f"fonte non raggiungibile ({exc}); dati dell'ultimo aggiornamento riuscito"
+                else:
+                    entry["reason"] = f"fonte non raggiungibile ({exc})"
             time.sleep(delay)
             continue
         time.sleep(delay)
@@ -1747,6 +1776,9 @@ def collect_players(config: dict, policy: dict, errors: list[dict], only: Option
                     "competizione non ancora pubblicata su PlayBasket"
                     if not published else "squadra non presente nell'elenco PlayBasket"
                 )
+                if entry.get("roster"):
+                    entry["status"] = "ok"
+                    entry["stale"] = True
                 log.warning("%s: %s", tid, entry["reason"])
                 continue
             entry["club_name"] = match["club"]
@@ -1756,16 +1788,31 @@ def collect_players(config: dict, policy: dict, errors: list[dict], only: Option
                 save_snapshot(comp_id, f"players_roster_{tid}", roster_html, match["roster_url"], transport)
             except Exception as exc:  # noqa: BLE001
                 errors.append({"competition_id": comp_id, "phase": "players", "url": match["roster_url"], "message": str(exc)})
-                entry["reason"] = f"rosa non recuperabile ({exc})"
+                if entry.get("roster"):
+                    entry["status"] = "ok"
+                    entry["stale"] = True
+                    entry["reason"] = f"rosa non aggiornata ({exc}); dati precedenti conservati"
+                else:
+                    entry["reason"] = f"rosa non recuperabile ({exc})"
                 time.sleep(delay)
                 continue
             time.sleep(delay)
             roster = parse_pb_roster(roster_html)
             if not roster:
-                entry["reason"] = "rosa non pubblicata su PlayBasket"
+                if entry.get("roster"):
+                    entry["status"] = "ok"
+                    entry["stale"] = True
+                    entry["reason"] = "rosa non pubblicata su PlayBasket; dati precedenti conservati"
+                else:
+                    entry["reason"] = "rosa non pubblicata su PlayBasket"
                 continue
+            prev_players = {norm_name(p.get("name")): p for p in entry.get("roster") or []}
             entry["status"] = "ok"
             entry["reason"] = None
+            entry["stale"] = False
+            entry["generated_at"] = now()
+            entry["last_success"] = entry["generated_at"]
+            entry["roster"] = []
             for item in roster:
                 player = _new_player(item)
                 if not item.get("no_presence"):
@@ -1774,6 +1821,11 @@ def collect_players(config: dict, policy: dict, errors: list[dict], only: Option
                         profile_html, _ = fetch(url, retries=retries)
                     except Exception as exc:  # noqa: BLE001
                         errors.append({"competition_id": comp_id, "phase": "players", "url": url, "message": str(exc)})
+                        old = prev_players.get(norm_name(item.get("name")))
+                        if old and old.get("log"):
+                            player["log"] = copy.deepcopy(old["log"])
+                            player["box_source"] = old.get("box_source")
+                            _aggregate(player)
                         time.sleep(delay)
                         entry["roster"].append(player)
                         continue
@@ -1881,20 +1933,35 @@ def players_summary(players: dict) -> dict:
     return {
         "players_teams": len(teams),
         "players_with_data": sum(1 for t in teams.values() if t.get("status") == "ok"),
+        "players_stale": sum(1 for t in teams.values() if t.get("stale")),
         "players_roster": sum(len(t.get("roster", [])) for t in teams.values()),
         "players_games": sum(len(p.get("log", [])) for t in teams.values() for p in t.get("roster", [])),
     }
 
 
+def _previous_player_teams(data: Optional[dict]) -> dict:
+    """Squadre dell'ultimo output pubblicato, usate come rete di sicurezza."""
+    if not data:
+        return {}
+    return ((data.get("players") or {}).get("teams")) or {}
+
+
 def run_players_only(config: dict, policy: dict, only: Optional[str] = None) -> dict:
     """Solo statistiche giocatori: aggiorna l'output esistente senza ri-scansionare."""
-    errors: list[dict] = []
-    score_updates: list[dict] = []
-    players = collect_players(config, policy, errors, only=only, score_updates=score_updates)
     out_path = OUT / "sc_portal_data.json"
     data = read_json(out_path, None)
     if data is None:
         raise RuntimeError("output sc_portal_data.json assente: eseguire prima la scansione completa")
+    previous = _previous_player_teams(data)
+    errors: list[dict] = []
+    score_updates: list[dict] = []
+    players = collect_players(config, policy, errors, only=only, score_updates=score_updates,
+                              previous=previous)
+    if only:
+        # Aggiornamento mirato: le altre competizioni restano com'erano.
+        merged_teams = dict(previous)
+        merged_teams.update(players.get("teams") or {})
+        players["teams"] = merged_teams
     data["players"] = players
     apply_lnp_scores(data.get("matches") or [], score_updates)
     summary = data.setdefault("sync_summary", {})
@@ -1980,8 +2047,16 @@ def run(config_path: Path, only: Optional[str], limit: Optional[int], parser: st
     standings = build_standings(config, results_by_comp, errors)
     team_logos = build_team_logos(config, matches)
     score_updates: list[dict] = []
-    players = {} if skip_players else collect_players(config, policy, errors, only=only,
-                                                      score_updates=score_updates)
+    previous_output = read_json(OUT / "sc_portal_data.json", None)
+    previous_players = _previous_player_teams(previous_output)
+    if skip_players:
+        # Nessuna nuova acquisizione: si conserva l'ultimo dato pubblicato
+        # invece di azzerare le statistiche individuali.
+        players = (previous_output or {}).get("players") or {}
+    else:
+        players = collect_players(config, policy, errors, only=only,
+                                  score_updates=score_updates,
+                                  previous=previous_players)
     apply_lnp_scores(matches, score_updates)
 
     summary = {

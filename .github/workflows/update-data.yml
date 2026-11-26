@@ -128,6 +128,26 @@ jobs:
           if dupes:
               print("Refusing to publish duplicated fixtures:", dupes[:5])
               sys.exit(1)
+
+          # Statistiche individuali: una fonte che risponde 403 non deve
+          # svuotare le rose gia' pubblicate (il motore le marca "stale").
+          new_sum = new.get("sync_summary") or {}
+          old_sum = (old or {}).get("sync_summary") or {}
+          n_new_games = new_sum.get("players_games") or 0
+          n_old_games = old_sum.get("players_games") or 0
+          print(f"players games: old={n_old_games} new={n_new_games} "
+                f"stale_teams={new_sum.get('players_stale', 0)}")
+          if old and n_old_games >= 50 and n_new_games < n_old_games * 0.5:
+              print("Refusing to publish degraded player stats (more than 50% games lost).")
+              sys.exit(1)
+          old_teams = ((old or {}).get("players") or {}).get("teams") or {}
+          new_teams = (new.get("players") or {}).get("teams") or {}
+          dropped = [tid for tid, t in old_teams.items()
+                     if (t.get("roster") or []) and not ((new_teams.get(tid) or {}).get("roster") or [])]
+          print(f"teams whose roster dropped to zero: {len(dropped)}")
+          if dropped:
+              print("Refusing to publish empty rosters for:", dropped[:5])
+              sys.exit(1)
           PY
 
       - name: Commit and push if changed

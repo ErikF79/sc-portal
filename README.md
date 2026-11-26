@@ -2,7 +2,7 @@
 
 PWA (Progressive Web App) per il **Sport Center**: calendari delle squadre, agenda, planner settimanale, analisi delle classifiche, **statistiche giocatori** e **schede squadra** con sito ufficiale e grafici.
 
-- **Versione:** 0.9.0
+- **Versione:** 0.9.1
 - **Dati:** tutti derivati da `data_engine/output/sc_portal_data.json` (nessun dato simulato: dove mancano i risultati si mostra `—` / "nessun risultato")
 - **Squadre:** FIP (basket, calendari + risultati), PlayBasket (rose, medie e game log), Lega Basket (box completo Serie A), Lega Pallacanestro LNP (tabellini ufficiali Serie A2), Lega Serie A (calcio), CarpeDiem Baskin (calendario Baskin CSAIN/EISI), gare personali
 
@@ -39,6 +39,26 @@ py data_engine/sc_data_engine.py --players-only
 ```
 
 (opzioni: `--players-only`, `--skip-players`, `--competition <id>`)
+
+### Aggiornamento automatico
+
+- **GitHub Actions** (`.github/workflows/update-data.yml`) gira ogni giorno alle 03:00 UTC (≈04:00 italiane) e aggiorna calendari, risultati e classifiche.
+- Dal 18/11/2025 **PlayBasket risponde `403 Forbidden` agli IP di GitHub Actions**: la CI non riesce più a leggere rose e game log. Il motore non svuota più le statistiche: conserva l'ultimo dato buono e lo marca `stale` (in app compare "⚠ non aggiornato" con l'ultima data valida). La CI inoltre rifiuta di pubblicare un file con rose azzerate o con oltre metà delle gare individuali perse.
+- Per riportare i dati PlayBasket aggiornati si esegue da un PC di casa (dove il sito risponde regolarmente):
+
+```
+UPDATE_PLAYERS_LOCAL.bat
+```
+
+Lo script `scripts/update-players-local.ps1` fa `git pull`, esegue `--players-only`, verifica che i dati non siano degradati, committa e pusha solo `data_engine/output/sc_portal_data.json` (log in `data_engine/logs/update_players_local.log`).
+
+Per automatizzarlo ogni giorno alle 04:00 con Task Scheduler:
+
+```
+schtasks /Create /TN "SC Portal - Players" /SC DAILY /ST 04:00 /TR "\"C:\HK Studio\Develop\Python\SC Portal\UPDATE_PLAYERS_LOCAL.bat\""
+```
+
+Il PC deve essere acceso e connesso: se è spento il task salta e i dati restano marcati come non aggiornati.
 
 ## Statistiche giocatori
 
